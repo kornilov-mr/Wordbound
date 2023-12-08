@@ -8,6 +8,7 @@ import org.json.simple.parser.ParseException;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Vector;
@@ -60,5 +61,9 @@ public class DeckWords {
             words.add(word.toJson());
         }
         deckJson.put("wordsInbound", words);
+        PrintWriter pw = new PrintWriter(wordsInBoundPath);
+        pw.write(jo.toJSONString());
+        pw.flush();
+        pw.close();
     }
 }

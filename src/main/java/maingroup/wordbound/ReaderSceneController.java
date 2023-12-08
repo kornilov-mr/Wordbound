@@ -96,6 +96,7 @@ public class ReaderSceneController {
                 }
             }
             if(!isIn) {
+                wordsIncountered.add(words.get(i));
                 arr.add(words.get(i));
                 addCount += 1;
             }

@@ -73,8 +73,12 @@ public class MainSceneController implements Initializable{
     }
     public void deckSelect(MouseEvent event) throws IOException, ParseException {
         TreeItem<String> item = (TreeItem<String>)vocabularyTree.getSelectionModel().getSelectedItem();
-        if(item!=null){
-
+        if(item==null){
+            return;
+        }
+        System.out.println(item);
+        if(item.isLeaf()){
+            System.out.println(item);
             DeckWords selectedDeck = deckMap.get(item.getValue());
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("RepeatScene.fxml"));
 
