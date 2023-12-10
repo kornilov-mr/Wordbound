@@ -13,4 +13,8 @@ module maingroup.wordbound {
     requires javafx.web;
     opens maingroup.wordbound to javafx.fxml;
     exports maingroup.wordbound;
+    exports maingroup.wordbound.Controllers;
+    opens maingroup.wordbound.Controllers to javafx.fxml;
+    exports maingroup.wordbound.Controllers.MainScene;
+    opens maingroup.wordbound.Controllers.MainScene to javafx.fxml;
 }

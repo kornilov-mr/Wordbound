@@ -1,4 +1,4 @@
-package maingroup.wordbound;
+package maingroup.wordbound.Controllers;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;

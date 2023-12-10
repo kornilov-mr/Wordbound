@@ -19,7 +19,7 @@ public class Wordbound extends Application {
     @Override
     public void start(Stage stage) throws IOException, ParseException {
         initialize();
-        FXMLLoader fxmlLoader = new FXMLLoader(Wordbound.class.getResource("mainScene.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(Wordbound.class.getResource("FXML/MainScene/mainScene.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 900, 600);
         stage.setTitle("Wordbound");
         stage.setScene(scene);

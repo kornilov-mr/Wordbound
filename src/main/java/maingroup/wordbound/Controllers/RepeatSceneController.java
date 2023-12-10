@@ -1,4 +1,4 @@
-package maingroup.wordbound;
+package maingroup.wordbound.Controllers;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -7,6 +7,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import maingroup.wordbound.Controllers.EndOfDeckSceneController;
+import maingroup.wordbound.Wordbound;
 import maingroup.wordbound.utilities.DeckWords;
 import maingroup.wordbound.utilities.WordInBound;
 import org.json.simple.parser.ParseException;
@@ -41,7 +43,8 @@ public class RepeatSceneController {
 
         Stage stage;
         stage = (Stage) mainPane.getScene().getWindow();
-        FXMLLoader fxmlLoader = new FXMLLoader(Wordbound.class.getResource("endOfDeckScene.fxml"));
+
+        FXMLLoader fxmlLoader = new FXMLLoader(Wordbound.class.getResource("FXML/endOfDeckScene.fxml"));
         Parent root = fxmlLoader.load();
         EndOfDeckSceneController endScene = fxmlLoader.getController();
         endScene.loadText(deck.deckName);
