@@ -20,7 +20,7 @@ public class Wordbound extends Application {
     public void start(Stage stage) throws IOException, ParseException {
         initialize();
         FXMLLoader fxmlLoader = new FXMLLoader(Wordbound.class.getResource("FXML/MainScene/mainScene.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 900, 600);
+        Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("Wordbound");
         stage.setScene(scene);
         stage.show();
