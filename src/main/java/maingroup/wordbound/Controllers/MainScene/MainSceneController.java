@@ -55,6 +55,7 @@ public class MainSceneController implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         mainBorderPane.setCenter(root);
     }
     public void loadReoeatScene(){

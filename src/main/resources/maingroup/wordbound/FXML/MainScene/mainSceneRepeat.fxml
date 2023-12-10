@@ -5,12 +5,12 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="450.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="maingroup.wordbound.Controllers.MainScene.MainSceneRepeat">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="maingroup.wordbound.Controllers.MainScene.MainSceneRepeat">
    <children>
-      <TreeView fx:id="vocabularyTree" layoutX="29.0" layoutY="76.0" onContextMenuRequested="#deckSelect" onMouseClicked="#deckSelect" prefHeight="310.0" prefWidth="272.0" style="-fx-background-color: #a8a8a8;" />
-      <Label layoutX="66.0" layoutY="37.0" text="Vocabulary">
+      <TreeView fx:id="vocabularyTree" layoutX="14.0" layoutY="106.0" onContextMenuRequested="#deckSelect" onMouseClicked="#deckSelect" prefHeight="580.0" prefWidth="650.0" style="-fx-background-color: #a8a8a8;" />
+      <Label layoutX="80.0" layoutY="31.0" text="Vocabulary">
          <font>
-            <Font size="20.0" />
+            <Font size="44.0" />
          </font>
       </Label>
    </children>

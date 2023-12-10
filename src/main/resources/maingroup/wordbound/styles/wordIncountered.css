@@ -1,3 +1,9 @@
+AnchorPane{
+    -fx-font-family: "Futura";
+}
+Label{
+    -fx-font: 18px "Futura";
+}
 #incountered{
     -fx-background-color:#c6dfff;
 }

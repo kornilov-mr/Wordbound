@@ -1,0 +1,17 @@
+AnchorPane{
+    -fx-font-family: "Futura";
+}
+Label{
+    -fx-font: 18px "Futura";
+}
+#authorLabel{
+    -fx-font: 14px "Futura";
+    -fx-text-fill: #d3484f;
+}
+#bookNameLabel{
+    -fx-font: 16px "Futura";
+    -fx-text-fill: #d3484f;
+}
+#incountered{
+    -fx-background-color:#c6dfff;
+}

@@ -21,6 +21,8 @@ public class Wordbound extends Application {
         initialize();
         FXMLLoader fxmlLoader = new FXMLLoader(Wordbound.class.getResource("FXML/MainScene/mainScene.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
+        String css = Wordbound.class.getResource("styles/mainScene.css").toExternalForm();
+        scene.getStylesheets().add(css);
         stage.setTitle("Wordbound");
         stage.setScene(scene);
         stage.show();

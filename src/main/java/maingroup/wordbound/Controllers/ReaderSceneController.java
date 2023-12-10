@@ -257,7 +257,7 @@ public class ReaderSceneController {
     private Label createWordLabel(String word,String tag) throws IOException {
         Label wordLabel = new Label(word);
         Font currFont= fonts.get(tag);
-        wordLabel.setStyle("-fx-font: 18px Tahoma;");
+//        wordLabel.setStyle("-fx-font: 18px Tahoma;");
 //        wordLabel.setStyle(fontToCss(currFont));
         wordLabel.setAccessibleText(word);
         if(!ifIncountered(word)){
