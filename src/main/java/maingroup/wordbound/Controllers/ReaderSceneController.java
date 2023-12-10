@@ -41,13 +41,13 @@ public class ReaderSceneController {
     private Label bookAuthorLabel;
     @FXML
     private TextFlow readerTextArea;
-    private String wordsIncounteredPath= new File("").getAbsolutePath()+"\\src\\main\\java\\maingroup\\wordbound\\userInfo\\wordsIncountered.json";
-    private String wordsInBoundPath= new File("").getAbsolutePath()+"\\src\\main\\java\\maingroup\\wordbound\\userInfo\\wordsInBound.json";
+    private final String wordsIncounteredPath= new File("").getAbsolutePath()+"\\src\\main\\java\\maingroup\\wordbound\\userInfo\\wordsIncountered.json";
+    private final String wordsInBoundPath= new File("").getAbsolutePath()+"\\src\\main\\java\\maingroup\\wordbound\\userInfo\\wordsInBound.json";
     private Vector<String> wordsIncountered= new Vector<String>();
     public Fb2Reader reader;
     private PageSplitter pageSplitter;
     private int PageCount=0;
-    public Map<String,Font> fonts = new HashMap<String,Font>();
+    public Map<String,Font> fonts = new HashMap<>();
     private Vector<Pair<String,String>> currentpage;
     public void startTextFlow(Fb2Reader reader) throws IOException, ParseException {
         this.reader=reader;
@@ -112,8 +112,8 @@ public class ReaderSceneController {
         if(text== null){
             return new Vector<>();
         }
-        Vector<String> clearWords= new Vector<String>();
-        Vector<String> words = new Vector<String>();
+        Vector<String> clearWords= new Vector<>();
+        Vector<String> words = new Vector<>();
         for(int i=0;i<text.size();i++){
             words.addAll(List.of(text.get(i).getKey().split(" ")));
         }
@@ -123,7 +123,7 @@ public class ReaderSceneController {
             word=word.replaceAll("\n","");
             word=word.toLowerCase();
             word = word.replaceAll("[^\\sa-zA-Z0-9]", "");
-            if (word!=""){
+            if (Objects.equals(word,"")){
                 clearWords.add(word);
             }
         }
@@ -248,17 +248,10 @@ public class ReaderSceneController {
 
         return stickyNotesPane;
     }
-    private String fontToCss(Font font){
-        String css = "-fx-font: ";
-        css+=font.getSize() +"px ";
-        css+=font.getFontName()+";";
-        return css;
-    }
-    private Label createWordLabel(String word,String tag) throws IOException {
+    private Label createWordLabel(String word,String tag) {
         Label wordLabel = new Label(word);
         Font currFont= fonts.get(tag);
 //        wordLabel.setStyle("-fx-font: 18px Tahoma;");
-//        wordLabel.setStyle(fontToCss(currFont));
         wordLabel.setAccessibleText(word);
         if(!ifIncountered(word)){
             wordLabel.setId("incountered");
@@ -295,7 +288,7 @@ public class ReaderSceneController {
         return wordLabel;
     }
     private Vector<Label> textToLabel(Vector<Pair<String,String>> text) throws IOException {
-        Vector<Label> labels= new Vector<Label>();
+        Vector<Label> labels= new Vector<>();
         for(int i=0;i<text.size();i++){
 
             String tag=text.get(i).getValue();

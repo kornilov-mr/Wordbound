@@ -28,30 +28,26 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import static java.awt.Color.black;
-
 public class MainSceneBooks implements Initializable {
     private Scene scene;
     private Parent root;
     private Stage stage;
-    private String[] supportedExtensions = {"*.fb2"};
+    private final String[] supportedExtensions = {"*.fb2"};
 
     private FileChooser.ExtensionFilter BooksEx = new FileChooser.ExtensionFilter("Books",supportedExtensions);
-    private FileChooser.ExtensionFilter AllEx = new FileChooser.ExtensionFilter("All","*.*");
+    private final FileChooser.ExtensionFilter AllEx = new FileChooser.ExtensionFilter("All","*.*");
     public String jsonBookPath=new File("").getAbsolutePath()+"\\src\\main\\resources\\maingroup\\wordbound\\books\\bookinfo.json";
-    private String path;
     @FXML
     private GridPane bookPreShowPane;
 
 
-    public void addBookButtononKlick(ActionEvent event) throws IOException, ParseException {
+    public void addBookButtononKlick() throws IOException, ParseException {
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().addAll(BooksEx,AllEx);
         File selectedFile= fileChooser.showOpenDialog(stage);
@@ -92,7 +88,7 @@ public class MainSceneBooks implements Initializable {
         }
     }
 
-    private FlowPane createFlowPane(JSONObject data) throws IOException {
+    private FlowPane createFlowPane(JSONObject data){
         FlowPane flow = new FlowPane(Orientation.HORIZONTAL);
         flow.setColumnHalignment(HPos.LEFT); // align labels on left
         flow.setPrefHeight(170);
@@ -105,7 +101,6 @@ public class MainSceneBooks implements Initializable {
         Label authorLabel = new Label(data.get("author").toString());
         authorLabel.setId("authorLabel");
 
-        String temp =(String) data.get("coverPath");
         FileInputStream inputstream = null;
         try {
             inputstream = new FileInputStream((String) data.get("coverPath"));
@@ -177,12 +172,5 @@ public class MainSceneBooks implements Initializable {
         flow.getChildren().add(nameLabel);
         flow.getChildren().add(authorLabel);
         return flow;
-    }
-    BufferedImage resizeImage(BufferedImage originalImage, int targetWidth, int targetHeight) throws IOException {
-        BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB);
-        Graphics2D graphics2D = resizedImage.createGraphics();
-        graphics2D.drawImage(originalImage, 0, 0, targetWidth, targetHeight, null);
-        graphics2D.dispose();
-        return resizedImage;
     }
 }

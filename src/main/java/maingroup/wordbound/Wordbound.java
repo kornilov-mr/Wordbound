@@ -33,7 +33,7 @@ public class Wordbound extends Application {
             CreateBookJson();
         }
     }
-    private void CreateBookJson() throws IOException, ParseException {
+    private void CreateBookJson() throws IOException {
         try {
             File myObj = new File(jsonBookPath);
             if (myObj.createNewFile()) {
