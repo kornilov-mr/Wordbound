@@ -1,14 +1,13 @@
 package maingroup.wordbound.utilities;
 
+import javafx.scene.control.TreeItem;
 import javafx.util.Pair;
 import maingroup.wordbound.bookreaders.Fb2Reader;
 
 import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Vector;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -31,6 +30,8 @@ public class PageSplitter {
     private Vector<Pair<String, String>> curr_page;
     private int prefLineCount=0;
     private int nextLineCount=0;
+    private long charCount=0;
+    private long charCountPoint=0;
     private Vector<Pair<String,String>> lines;
 
     public Map<String, String> tagsExist = Stream.of(new String[][]{
@@ -43,8 +44,8 @@ public class PageSplitter {
     }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
 
     public PageSplitter(Fb2Reader bookReader,Map<String,Font> FontsTotag) {
-        this.paneHigth = 550;
-        this.paneWidth = 600;
+        this.paneHigth = 450;
+        this.paneWidth = 550;
         this.text = bookReader.getText();
         this.openFinder = new SymbolFinder('<', this.text);
         this.closeFinder = new SymbolFinder('>', this.text);
@@ -75,9 +76,13 @@ public class PageSplitter {
 
         String[] words = textInTag.split(" ");
         Vector<Pair<String,String>> lines = new Vector<Pair<String,String>>();
-
+        String currTag=null;
         int wordscount = words.length;
-        String currTag=tags.lastElement();
+        if(tags.size()<=1){
+            currTag="s";
+        }else{
+            currTag=tags.get(1);
+        }
         Font currFont=fonts.get(currTag);
 
         for (int i = 0; i < wordscount; i++) {
@@ -109,12 +114,19 @@ public class PageSplitter {
 
         while(highCount<=paneHigth&&lineCount<lines.size()&&lineCount>=0){
             String curr_tag=lines.get(lineCount).getValue();
-            double currLineHigth=(double) (fonts.get(curr_tag).getStringBounds(" ", frc).getHeight() * 1.5);
+            double currLineHigth=0;
+            if(Objects.equals(lines.get(lineCount).getKey(),new String())){
+                 currLineHigth=(double) (fonts.get(curr_tag).getStringBounds("", frc).getHeight() );
+            }else{
+                 currLineHigth=(double) (fonts.get(curr_tag).getStringBounds("", frc).getHeight() * 1.5);
+
+            }
             if(highCount+currLineHigth>paneHigth){
                 break;
             }
             highCount+=currLineHigth;
             current.add(lines.get(lineCount));
+            charCount-=lines.get(lineCount).getKey().length();
             lineCount-=1;
         }
         Vector<Pair<String,String>> page= new Vector<>();
@@ -122,6 +134,8 @@ public class PageSplitter {
             page.add(current.get(i));
         }
         pageCount-=1;
+        charCountPoint=charCount;
+
         curr_page=page;
         prefLineCount=lineCount;
         return page;
@@ -130,38 +144,67 @@ public class PageSplitter {
         Vector<Pair<String,String>> current= new Vector<Pair<String,String>>();
         double highCount=0;
         lineCount=nextLineCount;
+        charCountPoint=charCount;
         prefLineCount=lineCount-1;
         while(highCount<=paneHigth&&lineCount<lines.size()){
             String curr_tag=lines.get(lineCount).getValue();
-            double currLineHigth=(double) (fonts.get(curr_tag).getStringBounds(" ", frc).getHeight() * 1.5);
+            double currLineHigth=(double) (fonts.get(curr_tag).getStringBounds(" ", frc).getHeight() *1.5);
             if(highCount+currLineHigth>paneHigth){
                 break;
             }
             highCount+=currLineHigth;
             current.add(lines.get(lineCount));
+            charCount+=lines.get(lineCount).getKey().length();
             lineCount+=1;
         }
+        charCount+=1;
         pageCount+=1;
         curr_page=lines;
-
         nextLineCount=lineCount;
 
         return current;
 
     }
-    public Vector<Pair<String, String>> getPageByN(int n){
-        int steps=Math.abs(n-pageCount)-1;
+
+    public Vector<Pair<String, String>> setFontSizeInText(Map<String,Font> newFonts){
+        this.fonts=newFonts;
+        long currCharCount=0;
+        int lineCounts=0;
+        this.lineCount=0;
+        this.openFinder = new SymbolFinder('<', this.text);
+        this.closeFinder = new SymbolFinder('>', this.text);
+
+        //set the current closeIndex and openIndex to the first tag in the line
+        this.closeIndex = closeFinder.nextSymbol();
+        this.openIndex = openFinder.nextSymbol();
+        this.lines=getLines();
+        System.out.println(charCountPoint);
+        while(currCharCount<charCountPoint){
+            currCharCount+=lines.get(lineCounts).getKey().length();
+            lineCounts+=1;
+        }
+        if(lineCounts!=0){
+            currCharCount-=lines.get(lineCounts-1).getKey().length()-1;
+        }
+        nextLineCount=lineCounts;
+        charCount=currCharCount;
+        return getNextPage();
+
+    }
+    public Vector<Pair<String, String>> getPageByN(int pageN){
+        int steps=Math.abs(pageN-pageCount)-1;
         Vector<Pair<String,String>> page = new Vector<>();
-        if(pageCount<n){
+        if(pageCount<pageN){
             for(int i=0;i<steps;i++){
+                pageCount+=1;
+
                 page=getNextPage();
             }
-        }else if(pageCount>n){
+        }else if(pageCount>pageN){
             for(int i=0;i<steps;i++){
                 page=getPrefPage();
+                pageCount-=1;
             }
-        }else{
-            page=curr_page;
         }
         return page;
     }
@@ -181,9 +224,7 @@ public class PageSplitter {
     }
 
     public Vector<Pair<String,String>> getLines() {
-        Vector<Pair<String,String>> lines= new Vector<Pair<String,String>>();
-        double higthCount = 0;
-
+        Vector<Pair<String,String>> lines= new Vector<>();
         while (openIndex != -1) {
 
             if (text.charAt(openIndex + 1) != '/') {

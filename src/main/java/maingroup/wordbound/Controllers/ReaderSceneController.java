@@ -12,6 +12,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Popup;
 import javafx.util.Pair;
+import maingroup.wordbound.accounts.AccountClass;
 import maingroup.wordbound.bookreaders.Fb2Reader;
 import maingroup.wordbound.utilities.PageSplitter;
 import org.json.simple.JSONArray;
@@ -31,6 +32,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Vector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 public class ReaderSceneController {
     private boolean isOnLabel;
     private boolean isOnNote;
@@ -46,22 +50,56 @@ public class ReaderSceneController {
     private Vector<String> wordsIncountered= new Vector<String>();
     public Fb2Reader reader;
     private PageSplitter pageSplitter;
-    private int PageCount=0;
+    private AccountClass account = new AccountClass();
+    private final Map<Integer,Integer> fontSizes= Stream.of(new int[][]{
+            {0, 8},
+            {1, 9},
+            {2, 10},
+            {3, 11},
+            {4, 12},
+            {5, 14},
+            {6, 18},
+            {7, 24},
+            {8, 30},
+            {9, 36},
+    }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
+    private Map<String,Integer> defaultFontSizes = new HashMap<>();
     public Map<String,Font> fonts = new HashMap<>();
     private Vector<Pair<String,String>> currentpage;
+
+    public ReaderSceneController() throws IOException, ParseException {
+    }
+    public Map<String,Font> changeFont(int n,Map<String,Font> fonts) {
+        Map<String, Font> newFonts= new HashMap<>();
+
+        for (String tag : fonts.keySet()) {
+            Font curr_font = fonts.get(tag);
+            int size = curr_font.getSize();
+            newFonts.put(tag, new Font("Tahoma", Font.BOLD, size + n));
+        }
+        return newFonts;
+    }
     public void startTextFlow(Fb2Reader reader) throws IOException, ParseException {
         this.reader=reader;
+        System.out.println(reader.realBookName);
         bookNameLabel.setText(reader.realBookName);
         bookAuthorLabel.setText(reader.autor);
 
-        Font fontP = new Font("Tahoma", Font.BOLD, 18);
-        Font fontS = new Font("Tahoma", Font.BOLD, 22);
-        Font fontT = new Font("Tahoma", Font.BOLD, 22);
-        fonts.put("p",fontP);
+        Font fontS = new Font("Tahoma", Font.BOLD, 4);
+        Font fontT = new Font("Tahoma", Font.BOLD, 4);
+        Font fonth = new Font("Tahoma", Font.BOLD, 0);
+        Font fontp = new Font("Tahoma", Font.BOLD, 0);
         fonts.put("s",fontS);
+        defaultFontSizes.put("s",4);
         fonts.put("t",fontT);
-        this.pageSplitter= new PageSplitter(reader,fonts);
+        defaultFontSizes.put("t",4);
+        fonts.put("h",fonth);
+        defaultFontSizes.put("h",0);
+        fonts.put("p",fontp);
+        defaultFontSizes.put("p",0);
 
+        fonts=changeFont(fontSizes.get((int)account.fontSize),fonts);
+        this.pageSplitter= new PageSplitter(reader,fonts);
         readWordsIncoutered();
         createWordInBoundJson();
         nextPage();
@@ -248,10 +286,30 @@ public class ReaderSceneController {
 
         return stickyNotesPane;
     }
+    public void downFontSize() throws IOException {
+        if(account.fontSize>=1){
+            account.fontSize-=1;
+            fonts=changeFont(fontSizes.get((int)account.fontSize)-fontSizes.get((int)account.fontSize+1),fonts);
+            changeFontinText();
+        }
+    }
+    public void changeFontinText() throws IOException {
+        this.currentpage=this.pageSplitter.setFontSizeInText(fonts);
+        readerTextArea.getChildren().clear();
+        System.out.println(this.currentpage);
+        readerTextArea.getChildren().addAll(textToLabel(this.currentpage));
+    }
+    public void upFontSize() throws IOException {
+        if(account.fontSize<9){
+            account.fontSize+=1;
+            fonts=changeFont(fontSizes.get((int)account.fontSize)-fontSizes.get((int)account.fontSize-1),fonts);
+            changeFontinText();
+        }
+    }
     private Label createWordLabel(String word,String tag) {
         Label wordLabel = new Label(word);
         Font currFont= fonts.get(tag);
-//        wordLabel.setStyle("-fx-font: 18px Tahoma;");
+        wordLabel.setStyle("-fx-font-size:"+ currFont.getSize() +"px;");
         wordLabel.setAccessibleText(word);
         if(!ifIncountered(word)){
             wordLabel.setId("incountered");
@@ -289,11 +347,12 @@ public class ReaderSceneController {
     }
     private Vector<Label> textToLabel(Vector<Pair<String,String>> text) throws IOException {
         Vector<Label> labels= new Vector<>();
+        readerTextArea.getChildren().add(new Text("\n"));
         for(int i=0;i<text.size();i++){
 
             String tag=text.get(i).getValue();
             String[] words= text.get(i).getKey().split(" ");
-
+            readerTextArea.getChildren().add(new Text("   "));
             for(int j=0;j<words.length;j++){
                 readerTextArea.getChildren().add(createWordLabel(words[j],tag));
                 readerTextArea.getChildren().add(new Text(" "));
@@ -310,8 +369,6 @@ public class ReaderSceneController {
         this.currentpage= pageSplitter.getNextPage();
         System.out.println(this.currentpage);
         readerTextArea.getChildren().addAll(textToLabel(this.currentpage));
-
-        PageCount+=1;
     }
     public void prefPage() throws IOException, ParseException {
         updateWordsIncoutered(addwordsIncoutered(this.currentpage));
@@ -319,8 +376,6 @@ public class ReaderSceneController {
         this.currentpage= pageSplitter.getPrefPage();
         System.out.println(this.currentpage);
         readerTextArea.getChildren().addAll(textToLabel(this.currentpage));
-
-        PageCount-=1;
     }
     private static String translate(String langFrom, String langTo, String text) throws IOException {
         // INSERT YOU URL HERE

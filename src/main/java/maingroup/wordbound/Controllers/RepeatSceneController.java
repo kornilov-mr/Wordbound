@@ -35,7 +35,7 @@ public class RepeatSceneController {
             secondWord.setText(currWord.wordTranslation);
             secondWord.setVisible(false);
         }else{
-//            deck.saveInJson();
+            deck.saveInJson();
             SwitchToEndScene();
         }
     }

@@ -121,6 +121,7 @@ public class Fb2Reader {
                 JSONObject data = (JSONObject) booksInfo.get(i);
                 if (Objects.equals((String) data.get("name"), (String) this.bookPath)) {
                     this.bookName=(String) data.get("name");
+                    this.realBookName=(String) data.get("realBookName");;
                     this.bookdirPath=(String) data.get("dirPath");
                     this.autor=(String) data.get("author");
                     this.bookPath=(String) data.get("bookPath");
@@ -389,6 +390,7 @@ public class Fb2Reader {
         JSONObject info = new JSONObject();
         info.put("name", this.bookName);
         info.put("author", this.autor);
+        info.put("realBookName", this.realBookName);
         info.put("bookPath", this.bookPath);
         info.put("dirPath", this.bookdirPath);
         info.put("charset", this.charset);
