@@ -14,6 +14,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Base64.Decoder;
+import java.util.Iterator;
 import java.util.Objects;
 
 
@@ -115,21 +116,16 @@ public class Fb2Reader {
 
             Object obj = new JSONParser().parse(new FileReader(this.jsonPath));
             JSONObject jo = (JSONObject) obj;
-            long bookCount = (long) jo.get("bookCount");
-            JSONArray booksInfo = (JSONArray) jo.get("books");
-            for (int i = 0; i < bookCount; i++) {
-                JSONObject data = (JSONObject) booksInfo.get(i);
-                if (Objects.equals((String) data.get("name"), (String) this.bookPath)) {
-                    this.bookName=(String) data.get("name");
-                    this.realBookName=(String) data.get("realBookName");;
-                    this.bookdirPath=(String) data.get("dirPath");
-                    this.autor=(String) data.get("author");
-                    this.bookPath=(String) data.get("bookPath");
-                    this.charset=(String) data.get("charset");
-                    this.coverPath=(String) data.get("coverPath");
-                    break;
-                }
-            }
+            JSONObject booksInfo = (JSONObject) jo.get("books");
+            JSONObject data = (JSONObject) booksInfo.get(this.bookPath);
+            this.bookName=(String) data.get("name");
+            this.realBookName=(String) data.get("realBookName");
+            this.bookdirPath=(String) data.get("dirPath");
+            this.autor=(String) data.get("author");
+            this.bookPath=(String) data.get("bookPath");
+            this.charset=(String) data.get("charset");
+            this.coverPath=(String) data.get("coverPath");
+
         }
     }
 
@@ -328,12 +324,15 @@ public class Fb2Reader {
 
         start = content.indexOf("<middle-name>");
         end = content.lastIndexOf("</middle-name>");
+        String middleName="";
+        if(start!=-1&&end!=-1){
+            start = start + 13;
 
-        start = start + 13;
+            dest = new char[end - start];
+            content.getChars(start, end, dest, 0);
+            middleName = new String(dest);
+        }
 
-        dest = new char[end - start];
-        content.getChars(start, end, dest, 0);
-        String middleName = new String(dest);
 
         start = content.indexOf("<last-name>");
         end = content.lastIndexOf("</last-name>");
@@ -355,10 +354,11 @@ public class Fb2Reader {
         if (bookCount == 0) {
             return false;
         }
-        JSONArray booksInfo = (JSONArray) jo.get("books");
+        JSONObject booksInfo = (JSONObject) jo.get("books");
+        Iterator<String> booksiterator= booksInfo.keySet().iterator();
         boolean thereIsBook = false;
-        for (int i = 0; i < bookCount; i++) {
-            JSONObject data = (JSONObject) booksInfo.get(i);
+        while(booksiterator.hasNext()){
+            JSONObject data = (JSONObject) booksInfo.get(booksiterator.next());
             if (Objects.equals((String) data.get("name"), (String) this.bookName)) {
                 thereIsBook = true;
             }
@@ -373,9 +373,9 @@ public class Fb2Reader {
         } else {
             Object obj = new JSONParser().parse(new FileReader(this.jsonPath));
             JSONObject jo = (JSONObject) obj;
-            JSONArray booksInfo = (JSONArray) jo.get("books");
+            JSONObject booksInfo = (JSONObject) jo.get("books");
             long bookCount = (long) jo.get("bookCount");
-            booksInfo.add(createJsondata());
+            booksInfo.put(this.bookName,createJsondata());
             jo.remove("bookCount");
             jo.put("bookCount", bookCount + 1);
             PrintWriter pw = new PrintWriter(this.jsonPath);
@@ -394,6 +394,7 @@ public class Fb2Reader {
         info.put("bookPath", this.bookPath);
         info.put("dirPath", this.bookdirPath);
         info.put("charset", this.charset);
+        info.put("timeLastSeen", System.currentTimeMillis());
         info.put("coverPath",this.coverPath);
         return info;
     }

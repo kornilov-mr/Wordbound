@@ -7,10 +7,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import maingroup.wordbound.Controllers.EndOfDeckSceneController;
 import maingroup.wordbound.Wordbound;
-import maingroup.wordbound.utilities.DeckWords;
-import maingroup.wordbound.utilities.WordInBound;
+import maingroup.wordbound.utilities.repeats.DeckWords;
+import maingroup.wordbound.utilities.repeats.WordInBound;
 import org.json.simple.parser.ParseException;
 
 import java.io.IOException;

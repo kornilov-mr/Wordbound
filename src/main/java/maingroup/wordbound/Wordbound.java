@@ -45,13 +45,12 @@ public class Wordbound extends Application {
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
-//        Object obj = new JSONParser().parse(new FileReader(jsonBookPath));
-//        JSONObject jo = (JSONObject) obj;
+
 
         JSONObject jo = new JSONObject();
         jo.put("bookCount",0);
         jo.put("wordCount",0);
-        jo.put("books",new JSONArray());
+        jo.put("books",new JSONObject());
 
 
         PrintWriter pw = new PrintWriter(jsonBookPath);

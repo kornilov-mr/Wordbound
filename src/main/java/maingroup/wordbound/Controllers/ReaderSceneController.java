@@ -3,18 +3,23 @@ package maingroup.wordbound.Controllers;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Popup;
+import javafx.stage.Stage;
 import javafx.util.Pair;
+import maingroup.wordbound.Wordbound;
 import maingroup.wordbound.accounts.AccountClass;
 import maingroup.wordbound.bookreaders.Fb2Reader;
-import maingroup.wordbound.utilities.PageSplitter;
+import maingroup.wordbound.utilities.pageSplit.PageSplitter;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -36,6 +41,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ReaderSceneController {
+    @FXML
+    private AnchorPane mainPane;
     private boolean isOnLabel;
     private boolean isOnNote;
     public Popup translationNote = new Popup();
@@ -395,5 +402,15 @@ public class ReaderSceneController {
         in.close();
         return response.toString();
     }
-
+    public void SwitchToMainMenu() throws IOException {
+        Stage stage;
+        stage = (Stage) mainPane.getScene().getWindow();
+        FXMLLoader fxmlLoader = new FXMLLoader(Wordbound.class.getResource("FXML/MainScene/mainScene.fxml"));
+        Scene scene = new Scene(fxmlLoader.load());
+        String css = Wordbound.class.getResource("styles/mainScene.css").toExternalForm();
+        scene.getStylesheets().add(css);
+        stage.setTitle("Wordbound");
+        stage.setScene(scene);
+        stage.show();
+    }
 }

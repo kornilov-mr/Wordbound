@@ -7,16 +7,21 @@
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.text.TextFlow?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: #faf1f1;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="maingroup.wordbound.Controllers.ReaderSceneController">
+<AnchorPane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: #faf1f1;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="maingroup.wordbound.Controllers.ReaderSceneController">
    <children>
       <Label fx:id="bookAuthorLabel" layoutX="135.0" layoutY="65.0" prefHeight="18.0" prefWidth="339.0" text="label" />
       <Label fx:id="bookNameLabel" layoutX="135.0" layoutY="25.0" prefHeight="26.0" prefWidth="346.0" text="label" />
-      <FlowPane fx:id="wordShower" layoutX="669.0" layoutY="25.0" prefHeight="547.0" prefWidth="218.0" />
-      <Button layoutX="234.0" layoutY="559.0" mnemonicParsing="false" onAction="#prefPage" text="pref Page" />
-      <Button layoutX="405.0" layoutY="561.0" mnemonicParsing="false" onAction="#nextPage" text="next Page" />
-      <TextFlow fx:id="readerTextArea" layoutX="14.0" layoutY="97.0" prefHeight="427.0" prefWidth="611.0" style="-fx-border-color: #333333; -fx-border-width: 9; -fx-border-radius: 5;" />
-      <Button layoutX="565.0" layoutY="533.0" mnemonicParsing="false" onAction="#upFontSize" text="up Font" />
-      <Button layoutX="565.0" layoutY="561.0" mnemonicParsing="false" onAction="#downFontSize" text="down Font" />
+      <FlowPane fx:id="wordShower" layoutX="752.0" layoutY="8.0" prefHeight="503.0" prefWidth="143.0" />
+      <TextFlow fx:id="readerTextArea" layoutX="15.0" layoutY="100.0" prefHeight="400.0" prefWidth="725.0" style="-fx-border-color: #333333; -fx-border-width: 9; -fx-border-radius: 5;" />
       <TextField layoutX="320.0" layoutY="558.0" prefHeight="26.0" prefWidth="67.0" />
+      <AnchorPane layoutX="-9.0" layoutY="515.0" prefHeight="98.0" prefWidth="918.0" style="-fx-background-color: #333333; -fx-border-color: #d3484f; -fx-border-width: 7;">
+         <children>
+            <Button fx:id="buttonsNextPref" layoutX="460.0" layoutY="32.0" mnemonicParsing="false" onAction="#nextPage" prefHeight="25.0" prefWidth="80.0" text="&gt;" />
+            <Button fx:id="buttonsNextPref" layoutX="240.0" layoutY="32.0" mnemonicParsing="false" onAction="#prefPage" prefHeight="3.0" prefWidth="80.0" text="&lt;" />
+            <Button fx:id="buttonsNextPref" layoutX="800.0" layoutY="14.0" mnemonicParsing="false" onAction="#upFontSize" prefHeight="25.0" prefWidth="80.0" text="up Font" />
+            <Button fx:id="buttonsNextPref" layoutX="800.0" layoutY="48.0" minWidth="-Infinity" mnemonicParsing="false" onAction="#downFontSize" prefHeight="25.0" prefWidth="80.0" text="down Font" />
+         </children>
+      </AnchorPane>
+      <Button fx:id="buttonsNextPref" layoutX="2.0" layoutY="2.0" mnemonicParsing="false" onAction="#SwitchToMainMenu" prefHeight="34.0" prefWidth="77.0" text="Main menu" />
    </children>
 </AnchorPane>

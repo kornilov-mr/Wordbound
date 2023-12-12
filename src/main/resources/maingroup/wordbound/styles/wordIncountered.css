@@ -7,3 +7,12 @@ Label{
 #incountered{
     -fx-background-color:#c6dfff;
 }
+#buttonsNextPref {
+    -fx-background-color:
+        linear-gradient(#d3484f, #cd484f),
+        radial-gradient(center 50% -40%, radius 200%, #d3484f 45%, #cd484f 50%);
+    -fx-background-radius: 6, 5;
+    -fx-background-insets: 0, 1;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.4) , 5, 0.0 , 0 , 1 );
+    -fx-text-fill: #363636;
+}
