@@ -19,7 +19,7 @@ public class BookSet {
     public Book getBook(String storageBooknName){
         return allbooks.get(storageBooknName);
     }
-    public Vector<Pair<Long,Book>> GetSortedBytime(){
+    public Vector<Book> getSortedBytime(){
         Vector<Pair<Long,Book>> booksOrder=new Vector<>();
         Iterator<String> booknamesIterator= allbooks.keySet().iterator();
         while(booknamesIterator.hasNext()){
@@ -28,7 +28,52 @@ public class BookSet {
             booksOrder.add(new Pair<>(currBook.timeLastSeen,currBook));
         }
         Collections.sort(booksOrder,new Sortbytime());
-        return booksOrder;
+        Vector<Book> books= new Vector<>();
+        for(int i=0;i<booksOrder.size();i++){
+            books.add(booksOrder.get(i).getValue());
+        }
+        return books;
+    }
+    private boolean compareStrings(String s, String s2){
+        int sz=s.length();
+        for(int i=0;i<sz;i++){
+            if(i>=s2.length()){
+                return false;
+            }
+            if(!Objects.equals(s.charAt(i),s2.charAt(i))){
+                return false;
+            }
+        }
+        return true;
+    }
+    public Vector<Book> sortBooksByString(String s){
+        Vector<Book> books = new Vector<>();
+        Vector<Boolean> alreadyAdded= new Vector<>();
+
+        Iterator<String> booknamesIterator= allbooks.keySet().iterator();
+        while(booknamesIterator.hasNext()){
+            String key= booknamesIterator.next();
+            Book currBook= allbooks.get(key);
+            if(compareStrings(s.toLowerCase(),currBook.author.toLowerCase())){
+                alreadyAdded.add(true);
+                books.add(currBook);
+            }else{
+                alreadyAdded.add(false);
+            }
+        }
+        int i=0;
+        booknamesIterator= allbooks.keySet().iterator();
+        while(booknamesIterator.hasNext()){
+            String key= booknamesIterator.next();
+            Book currBook= allbooks.get(key);
+            if(compareStrings(s.toLowerCase(),currBook.realBookName.toLowerCase())){
+                if(alreadyAdded.get(i)==false){
+                    books.add(currBook);
+                }
+            }
+            i++;
+        }
+        return books;
     }
 }
 class Sortbytime implements Comparator<Pair<Long,Book>> {

@@ -1,8 +1,9 @@
 AnchorPane{
     -fx-font-family: "Futura";
 }
-Label{
-    -fx-font: 18px "Futura";
+#mainTittle{
+    -fx-font: 40px "Futura";
+    -fx-text-fill: #d3484f;
 }
 #authorLabel{
     -fx-font: 10px "Futura";

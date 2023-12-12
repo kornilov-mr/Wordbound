@@ -14,6 +14,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.DropShadow;
@@ -61,6 +62,8 @@ public class MainSceneBooks implements Initializable {
     private GridPane bookPreShowPane;
     @FXML
     private ScrollPane scrollPaneBooks;
+    @FXML
+    private TextField bookSearch;
 
     public void addBookButtononKlick() throws IOException, ParseException {
         FileChooser fileChooser = new FileChooser();
@@ -107,18 +110,18 @@ public class MainSceneBooks implements Initializable {
         while(booksIterator.hasNext()) {
             String bookname = booksIterator.next();
             JSONObject data = (JSONObject) booksInfo.get(bookname);
-            Book currBook= new Book(createFlowPane(data),(String)data.get("name"),(String)data.get("realBookName"),(Long)data.get("timeLastSeen"));
+            Book currBook= new Book(createFlowPane(data),(String)data.get("name"),(String)data.get("realBookName"),(String)data.get("author"),(Long)data.get("timeLastSeen"));
             bookset.addBook((String)data.get("name"),currBook);
         }
-        Vector<Pair<Long,Book>> bookOrder= bookset.GetSortedBytime();
+        Vector<Book> bookOrder= bookset.getSortedBytime();
         displayBookSet(bookOrder);
 
     }
-    private void displayBookSet(Vector<Pair<Long,Book>> bookOrder){
+    private void displayBookSet(Vector<Book> bookOrder){
         boolean scrollNeeded = false;
         for(int i=0;i<bookOrder.size();i++){
             int j=i/3;
-            bookPreShowPane.add(bookOrder.get(i).getValue().content,i%3,j);
+            bookPreShowPane.add(bookOrder.get(i).content,i%3,j);
             if(i>=3*bookPreShowPane.getRowCount()){
                 scrollNeeded=true;
                 bookPreShowPane.setMaxHeight(bookPreShowPane.getHeight()+255+20);
@@ -251,5 +254,11 @@ public class MainSceneBooks implements Initializable {
         flow.getChildren().add(createImageView(data,flow));
         flow.getChildren().add(flowText);
         return flow;
+    }
+    public void startSearch(){
+        bookPreShowPane.getChildren().clear();
+        System.out.println(bookSearch.getText());
+        Vector<Book> bookOrder= bookset.sortBooksByString(bookSearch.getText());
+        displayBookSet(bookOrder);
     }
 }

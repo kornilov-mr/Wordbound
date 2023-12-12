@@ -16,8 +16,10 @@ public class Book {
     protected String realBookName;
     protected long timeLastSeen;
     protected String StorageBookName;
-    public Book(FlowPane content,String StorageBookName,String realBookName,long timeLastSeen){
+    protected String author;
+    public Book(FlowPane content,String StorageBookName,String realBookName,String author,long timeLastSeen){
         this.content=content;
+        this.author=author;
         this.StorageBookName=StorageBookName;
         this.realBookName=realBookName;
         this.timeLastSeen=timeLastSeen;
