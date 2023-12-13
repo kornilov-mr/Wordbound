@@ -1,0 +1,14 @@
+Label{
+    -fx-font: 20px "Futura";
+    -fx-text-fill: #d3484f;
+}
+
+#goodButton{
+    -fx-text-fill:#e3514d;
+}
+#badButton{
+    -fx-text-fill:#3DB344;
+}
+#showAnswerLabel{
+    -fx-text-fill:#e3514d;
+}

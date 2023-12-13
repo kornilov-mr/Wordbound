@@ -408,6 +408,7 @@ public class ReaderSceneController {
         FXMLLoader fxmlLoader = new FXMLLoader(Wordbound.class.getResource("FXML/MainScene/mainScene.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         String css = Wordbound.class.getResource("styles/mainScene.css").toExternalForm();
+        System.out.println(css);
         scene.getStylesheets().add(css);
         stage.setTitle("Wordbound");
         stage.setScene(scene);

@@ -17,13 +17,16 @@ public class EndOfDeckSceneController {
     @FXML
     Label labelDeck;
     public void loadText(String deckName){
-        labelDeck.setText("the end of Deck: "+deckName);
+        labelDeck.setText(deckName);
     }
     public void goToMain() throws IOException {
         Stage stage;
         stage = (Stage) mainPane.getScene().getWindow();
         FXMLLoader fxmlLoader = new FXMLLoader(Wordbound.class.getResource("FXML/MainScene/mainScene.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 900, 600);
+        String css = Wordbound.class.getResource("styles/mainScene.css").toExternalForm();
+        System.out.println(css);
+        scene.getStylesheets().add(css);
         stage.setTitle("Wordbound");
         stage.setScene(scene);
         stage.show();

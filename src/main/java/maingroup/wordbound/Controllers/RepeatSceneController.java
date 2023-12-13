@@ -2,6 +2,7 @@ package maingroup.wordbound.Controllers;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -13,28 +14,36 @@ import maingroup.wordbound.utilities.repeats.WordInBound;
 import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.Objects;
+import java.util.ResourceBundle;
 
-public class RepeatSceneController {
+public class RepeatSceneController  {
     @FXML
     private AnchorPane mainPane;
     @FXML
-    private Label firstWord;
+    private Label firstWordLabel;
     @FXML
-    private Label secondWord;
+    private Label secondWordLabel;
+    @FXML
+    private AnchorPane badPane;
+    @FXML
+    private AnchorPane goodPane;
     private DeckWords deck;
     public void loadDeck(DeckWords deck){
         this.deck=deck;
         System.out.println("test");
     }
     public void loadCurrWord() throws IOException, ParseException {
+        badPane.setVisible(false);
+        goodPane.setVisible(false);
         WordInBound currWord= deck.getNextWord();
         if(!Objects.equals(currWord.originalWord, "-1")){
-            firstWord.setText(currWord.originalWord);
-            secondWord.setText(currWord.wordTranslation);
-            secondWord.setVisible(false);
+            firstWordLabel.setText(currWord.originalWord);
+            secondWordLabel.setText(currWord.wordTranslation);
+            secondWordLabel.setVisible(false);
         }else{
-            deck.saveInJson();
+//            deck.saveInJson();
             SwitchToEndScene();
         }
     }
@@ -48,12 +57,15 @@ public class RepeatSceneController {
         EndOfDeckSceneController endScene = fxmlLoader.getController();
         endScene.loadText(deck.deckName);
         Scene scene = new Scene(root);
-        stage.setTitle("Wordbound");
+        String css = Wordbound.class.getResource("styles/repeatScene.css").toExternalForm();
+        scene.getStylesheets().add(css);
         stage.setScene(scene);
         stage.show();
     }
     public void showAnswer(){
-        secondWord.setVisible(true);
+        secondWordLabel.setVisible(true);
+        badPane.setVisible(true);
+        goodPane.setVisible(true);
     }
     public void getGood() throws IOException, ParseException {
         deck.getGoodWord();
@@ -64,5 +76,6 @@ public class RepeatSceneController {
         loadCurrWord();
 
     }
+
 
 }

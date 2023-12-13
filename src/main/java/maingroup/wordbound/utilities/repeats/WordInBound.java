@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class WordInBound implements Comparable<WordInBound>{
-    public final Map<Long, Long> repeats= Stream.of(new long[][]{
+    private final Map<Long, Long> repeats= Stream.of(new long[][]{
             {0, 20*60*1000},
             {1, 24*60*60*1000},
             {2, 3*24*60*60*1000},
@@ -23,7 +23,7 @@ public class WordInBound implements Comparable<WordInBound>{
     public String originalWord;
     public String timeInyyyymmdd;
     public String wordTranslation;
-    private long repeatCount;
+    protected long repeatCount;
     public WordInBound(long realTime, long nextrepeat, String deck, String originalWord,String timeInyyyymmdd,String wordTranslation,long repeatCount){
         this.realTime=realTime;
         this.nextrepeat=nextrepeat;

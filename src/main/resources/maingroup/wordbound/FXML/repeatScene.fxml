@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.TextFlow?>
+
+<AnchorPane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="400.0" style="-fx-background-color: #faf1f1;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="maingroup.wordbound.Controllers.RepeatSceneController">
+   <children>
+      <AnchorPane fx:id="showPane" layoutY="440.0" prefHeight="60.0" prefWidth="400.0" style="-fx-background-color: #333333;">
+         <children>
+            <Label fx:id="showAnswerLabel" layoutX="160.0" layoutY="15.0" minHeight="30.0" minWidth="80.0" onMouseClicked="#showAnswer" text="Show answer" textFill="#ac1c1c" />
+            <AnchorPane fx:id="badPane" onMouseClicked="#setAgain" prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: #e3514d;">
+               <children>
+                  <Label fx:id="badButton" layoutX="86.0" layoutY="21.0" onMouseClicked="#setAgain" text="Bad" />
+               </children>
+            </AnchorPane>
+            <AnchorPane fx:id="goodPane" layoutX="200.0" prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: #3DB344;">
+               <children>
+                  <Label fx:id="goodButton" layoutX="86.0" layoutY="21.0" onMouseClicked="#getGood" text="Good" />
+               </children>
+            </AnchorPane>
+         </children>
+      </AnchorPane>
+      <VBox fx:id="cardVbox" prefHeight="440.0" prefWidth="400.0">
+         <children>
+            <TextFlow prefHeight="50.0" prefWidth="380.0">
+               <children>
+                  <Label fx:id="firstWordLabel" text="Label" />
+               </children>
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </VBox.margin>
+            </TextFlow>
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#333333" height="30.0" stroke="BLACK" strokeType="INSIDE" width="401.0" />
+            <TextFlow prefHeight="50.0" prefWidth="490.0">
+               <VBox.margin>
+                  <Insets left="10.0" right="10.0" top="10.0" />
+               </VBox.margin>
+               <children>
+                  <Label fx:id="secondWordLabel" text="Label" />
+               </children>
+            </TextFlow>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="402.0" prefWidth="286.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="maingroup.wordbound.Controllers.EndOfDeckSceneController">
+<AnchorPane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="400.0" style="-fx-background-color: #faf1f1;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="maingroup.wordbound.Controllers.EndOfDeckSceneController">
    <children>
-      <Button fx:id="switchToMain" layoutX="113.0" layoutY="314.0" mnemonicParsing="false" onAction="#goToMain" text="To Main" />
-      <Label fx:id="labelDeck" layoutX="101.0" layoutY="50.0" text="End of the Deck" />
+      <Label alignment="CENTER" layoutX="-2.0" layoutY="54.0" prefHeight="18.0" prefWidth="400.0" text="End of the Deck" />
+      <Label fx:id="labelDeck" alignment="CENTER" layoutX="1.0" layoutY="86.0" prefHeight="18.0" prefWidth="400.0" text="Label" />
+      <AnchorPane layoutY="440.0" prefHeight="60.0" prefWidth="400.0" style="-fx-background-color: #333333;">
+         <children>
+            <Label fx:id="showAnswerLabel" alignment="CENTER" layoutX="-1.0" layoutY="21.0" onMouseClicked="#goToMain" prefHeight="18.0" prefWidth="400.0" text="Back to main menu" />
+         </children>
+      </AnchorPane>
    </children>
 </AnchorPane>

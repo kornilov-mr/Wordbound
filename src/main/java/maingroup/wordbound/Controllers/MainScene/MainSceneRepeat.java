@@ -6,12 +6,15 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import maingroup.wordbound.Controllers.RepeatSceneController;
 import maingroup.wordbound.Wordbound;
+import maingroup.wordbound.utilities.repeats.DeckIndicator;
 import maingroup.wordbound.utilities.repeats.DeckWords;
 import maingroup.wordbound.utilities.repeats.WordInBound;
 import org.json.simple.JSONArray;
@@ -40,25 +43,24 @@ public class MainSceneRepeat implements Initializable {
         if(item==null){
             return;
         }
-        System.out.println(item);
         if(item.isLeaf()){
-            System.out.println(item);
             DeckWords selectedDeck = deckMap.get(item.getValue());
-            FXMLLoader fxmlLoader = new FXMLLoader(Wordbound.class.getResource("FXML/RepeatScene.fxml"));
-
-            try {
-                root = fxmlLoader.load();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+            if(selectedDeck.indicator.blue==0&&selectedDeck.indicator.red==0){
+                return;
             }
+            FXMLLoader fxmlLoader = new FXMLLoader(Wordbound.class.getResource("FXML/repeatScene.fxml"));
+            root = fxmlLoader.load();
 
+
+
+
+            stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+            String css = Wordbound.class.getResource("styles/repeatScene.css").toExternalForm();
+            System.out.println(css);
+            scene = new Scene(root);
             RepeatSceneController repeatScene = fxmlLoader.getController();
             repeatScene.loadDeck(selectedDeck);
             repeatScene.loadCurrWord();
-
-            stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-            String css = Wordbound.class.getResource("styles/wordIncountered.css").toExternalForm();
-            scene = new Scene(root);
             scene.getStylesheets().add(css);
             stage.setScene(scene);
             stage.show();
@@ -76,7 +78,7 @@ public class MainSceneRepeat implements Initializable {
 
     }
     private void LoadWordInBound() throws IOException, ParseException {
-
+        vocabularyTree.setShowRoot(false);
         Object obj = new JSONParser().parse(new FileReader(wordsInBoundPath));
         JSONObject jo = (JSONObject) obj;
 
@@ -87,10 +89,10 @@ public class MainSceneRepeat implements Initializable {
         while(booksIterator.hasNext()) {
             String bookname = booksIterator.next();
             TreeItem<String> bookRoot = new TreeItem<>(bookname);
-
+            bookRoot.setGraphic(new Text("test"));
             JSONObject decks= (JSONObject) books.get(bookname);
             Iterator<String> decksIterator = decks.keySet().iterator();
-
+            Vector<DeckIndicator> indicators= new Vector<>();
             while(decksIterator.hasNext()){
 
                 String deckName = decksIterator.next();
@@ -103,17 +105,36 @@ public class MainSceneRepeat implements Initializable {
                     JSONObject wordInfo= (JSONObject) words.get(i);
                     wordInBound.add(CreateWordInBoundFromJson(wordInfo));
                 }
-                deckMap.put(bookname+"::"+deckName,new DeckWords(wordInBound,deckName,bookname));
+                DeckWords currDeck = new DeckWords(wordInBound,deckName,bookname);
+                deckMap.put(bookname+"::"+deckName,currDeck);
                 TreeItem<String> deckLeaf = new TreeItem<>(bookname+"::"+deckName);
+
+                deckLeaf.setGraphic(currDeck.createFlowPaneForDeck(currDeck.getIndicator()));
                 bookRoot.getChildren().add(deckLeaf);
+                indicators.add(currDeck.getIndicator());
             }
+            DeckWords tempdeck = new DeckWords(new Vector<WordInBound>(),bookname,bookname);
+
+            bookRoot.setGraphic(tempdeck.createFlowPaneForDeck(sumIndecators(indicators)));
             mainRoot.getChildren().add(bookRoot);
         }
         vocabularyTree.setRoot(mainRoot);
     }
-
+    private DeckIndicator sumIndecators(Vector<DeckIndicator> indicators){
+        int blue=0;
+        int red=0;
+        int green=0;
+        for(int i=0;i<indicators.size();i++){
+            DeckIndicator currIndicator= indicators.get(i);
+            blue+=currIndicator.blue;
+            red+=currIndicator.red;
+            green+=currIndicator.green;
+        }
+        return new DeckIndicator(red,blue,green);
+    }
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
         try {
             LoadWordInBound();
         } catch (IOException e) {
