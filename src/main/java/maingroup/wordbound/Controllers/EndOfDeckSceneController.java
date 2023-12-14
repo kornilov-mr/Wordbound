@@ -22,13 +22,6 @@ public class EndOfDeckSceneController {
     public void goToMain() throws IOException {
         Stage stage;
         stage = (Stage) mainPane.getScene().getWindow();
-        FXMLLoader fxmlLoader = new FXMLLoader(Wordbound.class.getResource("FXML/MainScene/mainScene.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 900, 600);
-        String css = Wordbound.class.getResource("styles/mainScene.css").toExternalForm();
-        System.out.println(css);
-        scene.getStylesheets().add(css);
-        stage.setTitle("Wordbound");
-        stage.setScene(scene);
-        stage.show();
+        stage.close();
     }
 }

@@ -11,17 +11,22 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import maingroup.wordbound.Wordbound;
+import maingroup.wordbound.accounts.AccountClass;
+import org.json.simple.parser.ParseException;
 
 import java.io.*;
 import java.net.URL;
 import java.util.*;
 
-public class MainSceneController implements Initializable {
+public class MainSceneController {
     @FXML
     private VBox navSlideBar;
     @FXML
     private BorderPane mainBorderPane;
-
+    private static AccountClass account;
+    public void loadAccount(AccountClass account){
+        this.account=account;
+    }
     @FXML
     public void loadBookScene(){
         FXMLLoader fxmlLoader = new FXMLLoader(Wordbound.class.getResource("FXML/MainScene/mainSceneBooks.fxml"));
@@ -31,9 +36,12 @@ public class MainSceneController implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        MainSceneBooks controller = fxmlLoader.getController();
+        controller.loadAccount(account);
+        controller.loadBooks();
         mainBorderPane.setCenter(root);
     }
+
     public void loadReoeatScene(){
         FXMLLoader fxmlLoader = new FXMLLoader(Wordbound.class.getResource("FXML/MainScene/mainSceneRepeat.fxml"));
         Parent root=null;
@@ -42,6 +50,9 @@ public class MainSceneController implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        MainSceneRepeat controller = fxmlLoader.getController();
+        controller.loadAccount(account);
+        controller.loadWordInBound();
         mainBorderPane.setCenter(root);
     }
 
@@ -59,9 +70,11 @@ public class MainSceneController implements Initializable {
         slide.setToX(-120);
         slide.play();
     }
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
+    public void init() {
         loadBookScene();
         navSlideBar.setTranslateX(-120);
+    }
+    public void updateWordsIncountered() throws IOException, ParseException {
+        account.loadWordsIncoutered();
     }
 }

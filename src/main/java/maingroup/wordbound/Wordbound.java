@@ -2,8 +2,11 @@ package maingroup.wordbound;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import maingroup.wordbound.Controllers.MainScene.MainSceneController;
+import maingroup.wordbound.accounts.AccountClass;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
@@ -19,10 +22,15 @@ public class Wordbound extends Application {
     @Override
     public void start(Stage stage) throws IOException, ParseException {
         initialize();
+        AccountClass acount = new AccountClass();
+
         FXMLLoader fxmlLoader = new FXMLLoader(Wordbound.class.getResource("FXML/MainScene/mainScene.fxml"));
-        Scene scene = new Scene(fxmlLoader.load());
+        Parent root = fxmlLoader.load();
+        MainSceneController controller= fxmlLoader.getController();
+        controller.loadAccount(acount);
+        controller.init();
+        Scene scene = new Scene(root);
         String css = Wordbound.class.getResource("styles/mainScene.css").toExternalForm();
-        System.out.println(css);
         scene.getStylesheets().add(css);
         stage.setTitle("Wordbound");
         stage.setScene(scene);

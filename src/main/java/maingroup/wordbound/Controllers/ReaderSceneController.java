@@ -5,6 +5,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -16,6 +17,7 @@ import javafx.scene.text.TextFlow;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.util.Pair;
+import maingroup.wordbound.Controllers.MainScene.MainSceneController;
 import maingroup.wordbound.Wordbound;
 import maingroup.wordbound.accounts.AccountClass;
 import maingroup.wordbound.bookreaders.Fb2Reader;
@@ -43,7 +45,9 @@ import java.util.stream.Stream;
 public class ReaderSceneController {
     @FXML
     private AnchorPane mainPane;
+    public Vector<String> wordsIncountered= new Vector<>();
     private boolean isOnLabel;
+
     private boolean isOnNote;
     public Popup translationNote = new Popup();
     @FXML
@@ -54,10 +58,8 @@ public class ReaderSceneController {
     private TextFlow readerTextArea;
     private final String wordsIncounteredPath= new File("").getAbsolutePath()+"\\src\\main\\java\\maingroup\\wordbound\\userInfo\\wordsIncountered.json";
     private final String wordsInBoundPath= new File("").getAbsolutePath()+"\\src\\main\\java\\maingroup\\wordbound\\userInfo\\wordsInBound.json";
-    private Vector<String> wordsIncountered= new Vector<String>();
     public Fb2Reader reader;
     private PageSplitter pageSplitter;
-    private AccountClass account = new AccountClass();
     private final Map<Integer,Integer> fontSizes= Stream.of(new int[][]{
             {0, 8},
             {1, 9},
@@ -73,9 +75,8 @@ public class ReaderSceneController {
     private Map<String,Integer> defaultFontSizes = new HashMap<>();
     public Map<String,Font> fonts = new HashMap<>();
     private Vector<Pair<String,String>> currentpage;
+    private AccountClass account;
 
-    public ReaderSceneController() throws IOException, ParseException {
-    }
     public Map<String,Font> changeFont(int n,Map<String,Font> fonts) {
         Map<String, Font> newFonts= new HashMap<>();
 
@@ -86,9 +87,11 @@ public class ReaderSceneController {
         }
         return newFonts;
     }
+    public void loadWordsIncountered(Vector<String> wordsIncountered){
+        this.wordsIncountered=wordsIncountered;
+    }
     public void startTextFlow(Fb2Reader reader) throws IOException, ParseException {
         this.reader=reader;
-        System.out.println(reader.realBookName);
         bookNameLabel.setText(reader.realBookName);
         bookAuthorLabel.setText(reader.autor);
 
@@ -107,23 +110,11 @@ public class ReaderSceneController {
 
         fonts=changeFont(fontSizes.get((int)account.fontSize),fonts);
         this.pageSplitter= new PageSplitter(reader,fonts);
-        readWordsIncoutered();
         createWordInBoundJson();
         nextPage();
     }
 
-    private void readWordsIncoutered() throws IOException, ParseException {
-        Object obj = new JSONParser().parse(new FileReader(wordsIncounteredPath));
-        JSONObject jo = (JSONObject) obj;
-        long bookCount = (long) jo.get("bookCount");
-        if (bookCount == 0) {
-            return;
-        }
-        JSONArray books = (JSONArray) jo.get("wordsIncountered");
-        for (int i = 0; i < bookCount; i++) {
-            wordsIncountered.add((String) books.get(i));
-        }
-    }
+
 
     private void updateWordsIncoutered(Vector<String> words) throws IOException, ParseException {
 
@@ -402,13 +393,17 @@ public class ReaderSceneController {
         in.close();
         return response.toString();
     }
-    public void SwitchToMainMenu() throws IOException {
+    public void SwitchToMainMenu() throws IOException, ParseException {
         Stage stage;
         stage = (Stage) mainPane.getScene().getWindow();
         FXMLLoader fxmlLoader = new FXMLLoader(Wordbound.class.getResource("FXML/MainScene/mainScene.fxml"));
-        Scene scene = new Scene(fxmlLoader.load());
+        Parent root = fxmlLoader.load();
+
+        MainSceneController controller = fxmlLoader.getController();
+        controller.updateWordsIncountered();
+        controller.init();
+        Scene scene = new Scene(root);
         String css = Wordbound.class.getResource("styles/mainScene.css").toExternalForm();
-        System.out.println(css);
         scene.getStylesheets().add(css);
         stage.setTitle("Wordbound");
         stage.setScene(scene);

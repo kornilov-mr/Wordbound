@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
@@ -8,9 +9,20 @@
    <left>
       <VBox fx:id="navSlideBar" onMouseEntered="#openNavBar" onMouseExited="#closeNavBar" prefHeight="900.0" prefWidth="200.0" style="-fx-background-color: #333333;" BorderPane.alignment="CENTER">
          <children>
-            <Button mnemonicParsing="false" onAction="#loadBookScene" prefHeight="26.0" prefWidth="208.0" text="Books" />
-            <Button mnemonicParsing="false" onAction="#loadReoeatScene" prefHeight="26.0" prefWidth="221.0" text="Repeats" />
-            <Button mnemonicParsing="false" prefHeight="26.0" prefWidth="217.0" text="statistic" />
+            <Button mnemonicParsing="false" onAction="#loadBookScene" prefHeight="50.0" prefWidth="500.0" text="Books" />
+            <Button mnemonicParsing="false" onAction="#loadReoeatScene" prefHeight="50.0" prefWidth="500.0" text="Repeats">
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin></Button>
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="500.0" text="statistic">
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin></Button>
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="500.0" text="Card browser">
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </Button>
          </children>
       </VBox>
    </left>

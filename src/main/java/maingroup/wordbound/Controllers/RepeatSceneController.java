@@ -32,7 +32,6 @@ public class RepeatSceneController  {
     private DeckWords deck;
     public void loadDeck(DeckWords deck){
         this.deck=deck;
-        System.out.println("test");
     }
     public void loadCurrWord() throws IOException, ParseException {
         badPane.setVisible(false);
@@ -43,7 +42,7 @@ public class RepeatSceneController  {
             secondWordLabel.setText(currWord.wordTranslation);
             secondWordLabel.setVisible(false);
         }else{
-//            deck.saveInJson();
+            deck.saveInJson();
             SwitchToEndScene();
         }
     }

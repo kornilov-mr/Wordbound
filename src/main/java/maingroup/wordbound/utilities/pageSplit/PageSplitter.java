@@ -82,7 +82,6 @@ public class PageSplitter {
         }else{
             currTag=tags.get(1);
         }
-        System.out.println(currTag);
         Font currFont=fonts.get(currTag);
 
         for (int i = 0; i < wordscount; i++) {
@@ -178,7 +177,6 @@ public class PageSplitter {
         this.closeIndex = closeFinder.nextSymbol();
         this.openIndex = openFinder.nextSymbol();
         this.lines=getLines();
-        System.out.println(charCountPoint);
         while(currCharCount<charCountPoint){
             currCharCount+=lines.get(lineCounts).getKey().length();
             lineCounts+=1;
