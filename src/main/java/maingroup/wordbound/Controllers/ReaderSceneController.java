@@ -45,7 +45,6 @@ import java.util.stream.Stream;
 public class ReaderSceneController {
     @FXML
     private AnchorPane mainPane;
-    public Vector<String> wordsIncountered= new Vector<>();
     private boolean isOnLabel;
 
     private boolean isOnNote;
@@ -87,7 +86,6 @@ public class ReaderSceneController {
     }
     public void loadAccount(AccountClass account){
         this.account=account;
-        this.wordsIncountered=account.wordsIncountered;
     }
     public void startTextFlow(Fb2Reader reader) throws IOException, ParseException {
         this.reader=reader;
@@ -130,7 +128,7 @@ public class ReaderSceneController {
             word=word.replaceAll("\n","");
             word=word.toLowerCase();
             word = word.replaceAll("[^\\sa-zA-Z0-9]", "");
-            if (Objects.equals(word,"")){
+            if (!Objects.equals(word,"")){
                 clearWords.add(word);
             }
         }
@@ -141,8 +139,8 @@ public class ReaderSceneController {
         word=word.replaceAll("\n","");
         word=word.toLowerCase();
         word = word.replaceAll("[^\\sa-zA-Z0-9]", "");
-        for(int i=0;i<wordsIncountered.size();i++){
-            if (Objects.equals(wordsIncountered.get(i), word)){
+        for(int i=0;i<account.wordsIncountered.size();i++){
+            if (Objects.equals(account.wordsIncountered.get(i), word)){
                 return true;
             }
         }
@@ -271,6 +269,7 @@ public class ReaderSceneController {
 
     public void nextPage() throws IOException, ParseException {
         account.jsonWritter.updateWordsIncoutered(addwordsIncoutered(this.currentpage));
+        account.updateWordIncountered();
         readerTextArea.getChildren().clear();
         this.currentpage= pageSplitter.getNextPage();
         System.out.println(this.currentpage);
@@ -278,6 +277,7 @@ public class ReaderSceneController {
     }
     public void prefPage() throws IOException, ParseException {
         account.jsonWritter.updateWordsIncoutered(addwordsIncoutered(this.currentpage));
+        account.updateWordIncountered();
         readerTextArea.getChildren().clear();
         this.currentpage= pageSplitter.getPrefPage();
         System.out.println(this.currentpage);

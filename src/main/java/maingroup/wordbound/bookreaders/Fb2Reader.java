@@ -112,7 +112,7 @@ public class Fb2Reader {
                 this.autor = this.getAutor();
                 createСover();
                 Bookdata bookdata= new Bookdata(this.bookPath,this.charset,this.realBookName,this.autor,this.bookdirPath, this.coverPath,this.bookName);
-
+                account.jsonWritter.addNewBookToWordInBoundJson(this.bookName);
                 account.jsonWritter.updateJson(bookdata);
             }
         } else {

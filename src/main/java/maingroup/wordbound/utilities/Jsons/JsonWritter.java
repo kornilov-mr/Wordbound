@@ -8,10 +8,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
@@ -63,6 +60,25 @@ public class JsonWritter {
             pw.flush();
             pw.close();
         }
+    }
+    public void addNewBookToWordInBoundJson(String bookName) throws IOException, ParseException {
+        Object obj = new JSONParser().parse(new FileReader(wordsInBoundPath));
+        JSONObject jo = (JSONObject) obj;
+
+        JSONObject books= (JSONObject) jo.get("books");
+        JSONObject deckJson= new JSONObject();
+        JSONObject wordinboundJson = new JSONObject();
+
+        wordinboundJson.put("wordCount",0);
+        wordinboundJson.put("wordsInbound",new JSONArray());
+        deckJson.put("default",wordinboundJson);
+        books.put(bookName,deckJson);
+        jo.remove("books");
+        jo.put("books",books);
+        PrintWriter pw = new PrintWriter(wordsInBoundPath);
+        pw.write(jo.toJSONString());
+        pw.flush();
+        pw.close();
     }
     public void updateWordInBountJson(String originalWord, String wordTranslation,String bookName) throws IOException, ParseException {
 
