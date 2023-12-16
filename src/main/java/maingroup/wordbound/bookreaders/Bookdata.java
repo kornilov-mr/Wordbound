@@ -10,13 +10,14 @@ public class Bookdata {
     private String autor;
     private String bookdirPath;
     private String coverPath;
-    public Bookdata(String bookPath, String charset,String realBookName,String autor,String bookdirPath,String coverPath ){
+    public Bookdata(String bookPath, String charset,String realBookName,String autor,String bookdirPath,String coverPath,String bookName ){
         this.bookPath=bookPath;
         this.charset=charset;
         this.realBookName=realBookName;
         this.autor=autor;
         this.bookdirPath=bookdirPath;
         this.coverPath=coverPath;
+        this.bookName=bookName;
     }
     public JSONObject createJsondata() {
         JSONObject info = new JSONObject();

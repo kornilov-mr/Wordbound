@@ -20,7 +20,7 @@ import java.util.Vector;
 public class DeckWords {
     public String deckName;
     public String bookName;
-    private Vector<WordInBound> deck;
+    public Vector<WordInBound> deck;
     public DeckIndicator indicator;
     public DeckWords(Vector<WordInBound> deck,String deckName,String bookName){
         this.deck=deck;

@@ -28,7 +28,7 @@ public class MainSceneController {
         this.account=account;
     }
     @FXML
-    public void loadBookScene(){
+    public void loadBookScene() throws IOException, ParseException {
         FXMLLoader fxmlLoader = new FXMLLoader(Wordbound.class.getResource("FXML/MainScene/mainSceneBooks.fxml"));
         Parent root=null;
         try {
@@ -70,7 +70,7 @@ public class MainSceneController {
         slide.setToX(-120);
         slide.play();
     }
-    public void init() {
+    public void init() throws IOException, ParseException {
         loadBookScene();
         navSlideBar.setTranslateX(-120);
     }

@@ -104,31 +104,7 @@ public class JsonWritter {
         pw.flush();
         pw.close();
     }
-    public void createWordInBoundJson(String bookName) throws IOException, ParseException {
-        Object obj = new JSONParser().parse(new FileReader(wordsInBoundPath));
-        JSONObject jo = (JSONObject) obj;
 
-        JSONObject books= (JSONObject) jo.get("books");
-        if(books.get(bookName)==null){
-            JSONObject newDeck= new JSONObject();
-
-            JSONObject NewJson= new JSONObject();
-            NewJson.put("wordCount",0);
-            NewJson.put("wordsInbound",new JSONArray());
-
-            newDeck.put("default",NewJson);
-
-            books.put(bookName,newDeck);
-
-            long bookcount= (long) jo.get("bookCount");
-            jo.remove("bookCount");
-            jo.put("bookCount", bookcount+1);
-        }
-        PrintWriter pw = new PrintWriter(wordsInBoundPath);
-        pw.write(jo.toJSONString());
-        pw.flush();
-        pw.close();
-    }
     public void updateWordsIncoutered(Vector<String> words) throws IOException, ParseException {
 
         Object obj = new JSONParser().parse(new FileReader(wordsIncounteredPath));
@@ -166,12 +142,15 @@ public class JsonWritter {
         JSONObject decks=(JSONObject) books.get(deckWords.bookName);
         JSONObject deckJson=(JSONObject) decks.get(deckWords.deckName);
         deckJson.remove("wordsInbound");
+
         JSONArray words = new JSONArray();
-        for(int i=0;i<decks.size();i++){
-            WordInBound word = (WordInBound) decks.get(i);
+        for(int i=0;i<deckWords.deck.size();i++){
+            WordInBound word =  deckWords.deck.get(i);
             words.add(word.toJson());
         }
         deckJson.put("wordsInbound", words);
+        deckJson.remove("wordCount");
+        deckJson.put("wordCount",words.size());
         PrintWriter pw = new PrintWriter(wordsInBoundPath);
         pw.write(jo.toJSONString());
         pw.flush();

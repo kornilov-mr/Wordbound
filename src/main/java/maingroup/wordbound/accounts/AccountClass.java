@@ -1,6 +1,7 @@
 package maingroup.wordbound.accounts;
 
 import javafx.util.Pair;
+import maingroup.wordbound.utilities.Jsons.JsonHandler;
 import maingroup.wordbound.utilities.Jsons.JsonReader;
 import maingroup.wordbound.utilities.Jsons.JsonWritter;
 import maingroup.wordbound.utilities.books.BookSet;
@@ -14,18 +15,24 @@ import java.util.*;
 public class AccountClass {
     public JsonWritter jsonWritter= new JsonWritter();
     public JsonReader jsonReader = new JsonReader();
+    public JsonHandler jsonHandler;
     public Config generalldata;
     public Vector<String> wordsIncountered= new Vector<>();
     public Map<String,DeckWords> decksInVector = new HashMap<>();
     public Map<String, Pair<Map<String,DeckWords>,DeckIndicator>> deckInTree= new HashMap<>();
     public BookSet bookset;
-    private final String wordsInBoundPath= new File("").getAbsolutePath()+"\\src\\main\\java\\maingroup\\wordbound\\userInfo\\wordsInBound.json";
 
     public AccountClass() throws IOException, ParseException {
+        jsonHandler=new JsonHandler(jsonReader);
+        jsonHandler.checkAndCreateBookJson();
+        jsonHandler.checkAndCreateWordsInBound();
+        jsonHandler.checkAndCreateIncountered();
+        jsonHandler.checkAndCreateUserData();
         updateWordIncountered();
         updateWordsInbound();
         updateBookset();
         updategeneralldata();
+
     }
     public void updateWordIncountered() throws IOException, ParseException {
         this.wordsIncountered= jsonReader.loadWordsIncoutered();

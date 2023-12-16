@@ -7,7 +7,7 @@ import org.json.simple.parser.ParseException;
 import java.io.IOException;
 import java.util.*;
 public class BookSet {
-    private Map<String,Book> allbooks = new HashMap<>();
+    public Map<String,Book> allbooks = new HashMap<>();
     public BookSet(){
     }
     public void addBook(String storageBooknName,Book book){

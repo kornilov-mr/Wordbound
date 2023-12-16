@@ -53,7 +53,6 @@ import java.util.Vector;
 public class MainSceneBooks {
     private Stage stage;
     private final String[] supportedExtensions = {"*.fb2"};
-    private BookSet bookset = new BookSet();
     private FileChooser.ExtensionFilter BooksEx = new FileChooser.ExtensionFilter("Books",supportedExtensions);
     private final FileChooser.ExtensionFilter AllEx = new FileChooser.ExtensionFilter("All","*.*");
     public String jsonBookPath=new File("").getAbsolutePath()+"\\src\\main\\resources\\maingroup\\wordbound\\books\\bookinfo.json";
@@ -79,11 +78,12 @@ public class MainSceneBooks {
         }
     }
 
-    public void loadBooks() {
+    public void loadBooks() throws IOException, ParseException {
         scrollPaneBooks.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         LoadFlowPlane();
     }
-    private void LoadFlowPlane() {
+    private void LoadFlowPlane() throws IOException, ParseException {
+        account.updateBookset();
         Vector<Book> bookOrder= account.bookset.getSortedBytime();
         displayBookSet(bookOrder);
     }
@@ -104,7 +104,7 @@ public class MainSceneBooks {
     }
     public void startSearch(){
         bookPreShowPane.getChildren().clear();
-        Vector<Book> bookOrder= bookset.sortBooksByString(bookSearch.getText());
+        Vector<Book> bookOrder= account.bookset.sortBooksByString(bookSearch.getText());
         displayBookSet(bookOrder);
     }
 }

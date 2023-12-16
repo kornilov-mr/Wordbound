@@ -109,7 +109,6 @@ public class ReaderSceneController {
 
         fonts=changeFont(fontSizes.get((int)account.generalldata.fontSize),fonts);
         this.pageSplitter= new PageSplitter(reader,fonts);
-        account.jsonWritter.createWordInBoundJson(reader.bookName);
         nextPage();
     }
 
