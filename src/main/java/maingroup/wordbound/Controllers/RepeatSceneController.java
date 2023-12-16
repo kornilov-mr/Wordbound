@@ -8,7 +8,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import maingroup.wordbound.Controllers.MainScene.MainSceneRepeat;
 import maingroup.wordbound.Wordbound;
+import maingroup.wordbound.accounts.AccountClass;
 import maingroup.wordbound.utilities.repeats.DeckWords;
 import maingroup.wordbound.utilities.repeats.WordInBound;
 import org.json.simple.parser.ParseException;
@@ -30,8 +32,16 @@ public class RepeatSceneController  {
     @FXML
     private AnchorPane goodPane;
     private DeckWords deck;
+    private MainSceneRepeat controller;
+    private AccountClass account;
+    public void loadAccount(AccountClass account){
+        this.account=account;
+    }
     public void loadDeck(DeckWords deck){
         this.deck=deck;
+    }
+    public void setParent(MainSceneRepeat controller){
+        this.controller= controller;
     }
     public void loadCurrWord() throws IOException, ParseException {
         badPane.setVisible(false);
@@ -42,7 +52,8 @@ public class RepeatSceneController  {
             secondWordLabel.setText(currWord.wordTranslation);
             secondWordLabel.setVisible(false);
         }else{
-            deck.saveInJson();
+            account.jsonWritter.saveDeckInJson(deck);
+            account.updateWordsInbound();
             SwitchToEndScene();
         }
     }
@@ -55,6 +66,7 @@ public class RepeatSceneController  {
         Parent root = fxmlLoader.load();
         EndOfDeckSceneController endScene = fxmlLoader.getController();
         endScene.loadText(deck.deckName);
+        endScene.setParent(controller);
         Scene scene = new Scene(root);
         String css = Wordbound.class.getResource("styles/repeatScene.css").toExternalForm();
         scene.getStylesheets().add(css);

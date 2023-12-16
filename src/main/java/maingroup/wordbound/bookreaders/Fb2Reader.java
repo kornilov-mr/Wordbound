@@ -1,6 +1,7 @@
 package maingroup.wordbound.bookreaders;
 
 import javafx.scene.control.Alert;
+import maingroup.wordbound.accounts.AccountClass;
 import org.apache.commons.io.FileUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -28,7 +29,7 @@ public class Fb2Reader {
     public String bookdirPath;
     public String coverPath;
 
-    public Fb2Reader(String path, boolean initialisation) throws IOException, ParseException {
+    public Fb2Reader(String path, AccountClass account, boolean initialisation) throws IOException, ParseException {
         this.bookPath = path;
 
         if (initialisation) {
@@ -88,7 +89,7 @@ public class Fb2Reader {
             this.realBookName=bookname;
             this.bookName = bookname.replaceAll(" ","");
 
-            if (alreadyadded()) {
+            if (account.jsonWritter.alreadyadded(this.bookName)){
                 deleteFiles();
                 this.bookdirPath = pathToBooks + "\\" + this.bookName;
                 this.bookPath = this.bookdirPath + "\\" + this.bookName + ".txt";
@@ -110,7 +111,9 @@ public class Fb2Reader {
                 this.bookPath = this.bookdirPath + "\\" + this.bookName + ".txt";
                 this.autor = this.getAutor();
                 createСover();
-                updateJson();
+                Bookdata bookdata= new Bookdata(this.bookPath,this.charset,this.realBookName,this.autor,this.bookdirPath, this.coverPath);
+
+                account.jsonWritter.updateJson(bookdata);
             }
         } else {
 
@@ -346,58 +349,6 @@ public class Fb2Reader {
         return firstName + " " + middleName + " " + lastName;
     }
 
-    private boolean alreadyadded() throws IOException, ParseException {
-
-        Object obj = new JSONParser().parse(new FileReader(this.jsonPath));
-        JSONObject jo = (JSONObject) obj;
-        long bookCount = (long) jo.get("bookCount");
-        if (bookCount == 0) {
-            return false;
-        }
-        JSONObject booksInfo = (JSONObject) jo.get("books");
-        Iterator<String> booksiterator= booksInfo.keySet().iterator();
-        boolean thereIsBook = false;
-        while(booksiterator.hasNext()){
-            JSONObject data = (JSONObject) booksInfo.get(booksiterator.next());
-            if (Objects.equals((String) data.get("name"), (String) this.bookName)) {
-                thereIsBook = true;
-            }
-        }
-        return thereIsBook;
-    }
-
-    private void updateJson() throws IOException, ParseException {
-
-        if (alreadyadded()) {
-            return;
-        } else {
-            Object obj = new JSONParser().parse(new FileReader(this.jsonPath));
-            JSONObject jo = (JSONObject) obj;
-            JSONObject booksInfo = (JSONObject) jo.get("books");
-            long bookCount = (long) jo.get("bookCount");
-            booksInfo.put(this.bookName,createJsondata());
-            jo.remove("bookCount");
-            jo.put("bookCount", bookCount + 1);
-            PrintWriter pw = new PrintWriter(this.jsonPath);
-            pw.write(jo.toJSONString());
-            pw.flush();
-            pw.close();
-        }
-
-    }
-
-    private JSONObject createJsondata() {
-        JSONObject info = new JSONObject();
-        info.put("name", this.bookName);
-        info.put("author", this.autor);
-        info.put("realBookName", this.realBookName);
-        info.put("bookPath", this.bookPath);
-        info.put("dirPath", this.bookdirPath);
-        info.put("charset", this.charset);
-        info.put("timeLastSeen", System.currentTimeMillis());
-        info.put("coverPath",this.coverPath);
-        return info;
-    }
 
     public void deleteFiles() throws IOException {
         System.out.println(this.bookdirPath);

@@ -72,7 +72,7 @@ public class MainSceneBooks {
         fileChooser.getExtensionFilters().addAll(BooksEx,AllEx);
         File selectedFile= fileChooser.showOpenDialog(stage);
         if(selectedFile!=null){
-            Fb2Reader fb2Reader = new Fb2Reader(selectedFile.getAbsolutePath(),true);
+            Fb2Reader fb2Reader = new Fb2Reader(selectedFile.getAbsolutePath(),account,true);
             bookPreShowPane.getChildren().clear();
             LoadFlowPlane();
 
@@ -91,7 +91,7 @@ public class MainSceneBooks {
         boolean scrollNeeded = false;
         for(int i=0;i<bookOrder.size();i++){
             int j=i/3;
-            bookPreShowPane.add(bookOrder.get(i).content,i%3,j);
+            bookPreShowPane.add(bookOrder.get(i).createFlowPane(account),i%3,j);
             if(i>=3*bookPreShowPane.getRowCount()){
                 scrollNeeded=true;
                 bookPreShowPane.setMaxHeight(bookPreShowPane.getHeight()+255+20);

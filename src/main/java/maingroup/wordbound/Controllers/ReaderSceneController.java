@@ -56,8 +56,6 @@ public class ReaderSceneController {
     private Label bookAuthorLabel;
     @FXML
     private TextFlow readerTextArea;
-    private final String wordsIncounteredPath= new File("").getAbsolutePath()+"\\src\\main\\java\\maingroup\\wordbound\\userInfo\\wordsIncountered.json";
-    private final String wordsInBoundPath= new File("").getAbsolutePath()+"\\src\\main\\java\\maingroup\\wordbound\\userInfo\\wordsInBound.json";
     public Fb2Reader reader;
     private PageSplitter pageSplitter;
     private final Map<Integer,Integer> fontSizes= Stream.of(new int[][]{
@@ -87,8 +85,9 @@ public class ReaderSceneController {
         }
         return newFonts;
     }
-    public void loadWordsIncountered(Vector<String> wordsIncountered){
-        this.wordsIncountered=wordsIncountered;
+    public void loadAccount(AccountClass account){
+        this.account=account;
+        this.wordsIncountered=account.wordsIncountered;
     }
     public void startTextFlow(Fb2Reader reader) throws IOException, ParseException {
         this.reader=reader;
@@ -108,42 +107,15 @@ public class ReaderSceneController {
         fonts.put("p",fontp);
         defaultFontSizes.put("p",0);
 
-        fonts=changeFont(fontSizes.get((int)account.fontSize),fonts);
+        fonts=changeFont(fontSizes.get((int)account.generalldata.fontSize),fonts);
         this.pageSplitter= new PageSplitter(reader,fonts);
-        createWordInBoundJson();
+        account.jsonWritter.createWordInBoundJson(reader.bookName);
         nextPage();
     }
 
 
 
-    private void updateWordsIncoutered(Vector<String> words) throws IOException, ParseException {
 
-        Object obj = new JSONParser().parse(new FileReader(wordsIncounteredPath));
-        JSONObject jo = (JSONObject) obj;
-
-        JSONArray arr= (JSONArray) jo.get("wordsIncountered");
-        long bookCount= (long) jo.get("bookCount");
-        int addCount=0;
-        for(int i=0;i<words.size();i++){
-            boolean isIn=false;
-            for(int j=0;j<bookCount;j++){
-                if(Objects.equals(arr.get(j),words.get(i))){
-                    isIn=true;
-                }
-            }
-            if(!isIn) {
-                wordsIncountered.add(words.get(i));
-                arr.add(words.get(i));
-                addCount += 1;
-            }
-        }
-        jo.remove("bookCount");
-        jo.put("bookCount", addCount+bookCount);
-        PrintWriter pw = new PrintWriter(wordsIncounteredPath);
-        pw.write(jo.toJSONString());
-        pw.flush();
-        pw.close();
-    }
     private Vector<String> addwordsIncoutered(Vector<Pair<String,String>> text){
         if(text== null){
             return new Vector<>();
@@ -177,71 +149,8 @@ public class ReaderSceneController {
         }
         return false;
     }
-    private void createWordInBoundJson() throws IOException, ParseException {
-        Object obj = new JSONParser().parse(new FileReader(wordsInBoundPath));
-        JSONObject jo = (JSONObject) obj;
-
-        JSONObject books= (JSONObject) jo.get("books");
-        if(books.get(reader.bookName)==null){
-            JSONObject newDeck= new JSONObject();
-
-            JSONObject NewJson= new JSONObject();
-            NewJson.put("wordCount",0);
-            NewJson.put("wordsInbound",new JSONArray());
-
-            newDeck.put("default",NewJson);
-
-            books.put(reader.bookName,newDeck);
-
-            long bookcount= (long) jo.get("bookCount");
-            jo.remove("bookCount");
-            jo.put("bookCount", bookcount+1);
-        }
-        PrintWriter pw = new PrintWriter(wordsInBoundPath);
-        pw.write(jo.toJSONString());
-        pw.flush();
-        pw.close();
-    }
-    private void updateWordInBountJson(String originalWord, String wordTranslation) throws IOException, ParseException {
-
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-        LocalDateTime data = LocalDateTime.now();
-
-        Object obj = new JSONParser().parse(new FileReader(wordsInBoundPath));
-        JSONObject jo = (JSONObject) obj;
-
-        JSONObject books= (JSONObject) jo.get("books");
-
-        JSONObject curr_book = (JSONObject) books.get(reader.bookName);
-
-        JSONObject deck = (JSONObject) curr_book.get("default");
-
-        JSONArray wordsInbound = (JSONArray) deck.get("wordsInbound");
-
-        JSONObject boundData= new JSONObject();
-        boundData.put("originalWord",originalWord);
-        boundData.put("wordTranslation",wordTranslation);
-
-        boundData.put("time",dtf.format(data));
-        boundData.put("realTime",System.currentTimeMillis());
-        boundData.put("nextrepeat",System.currentTimeMillis());
-
-        boundData.put("deck","default");
-
-        boundData.put("repeatCount",-1);
 
 
-        wordsInbound.add(boundData);
-
-        long wordCount= (long) deck.get("wordCount");
-        deck.remove("wordCount");
-        deck.put("wordCount", wordCount+1);
-
-        PrintWriter pw = new PrintWriter(wordsInBoundPath);
-        pw.write(jo.toJSONString());
-        pw.flush();
-        pw.close();
-    }
     private StackPane createTranslationNode(String wordToTranslate) throws IOException {
         String wordTranslation=translate("de", "en", wordToTranslate);
         StackPane stickyNotesPane = new StackPane();
@@ -271,7 +180,7 @@ public class ReaderSceneController {
             @Override
             public void handle(ActionEvent event) {
                 try {
-                    updateWordInBountJson(wordToTranslate,wordTranslation);
+                    account.jsonWritter.updateWordInBountJson(wordToTranslate,wordTranslation,reader.bookName);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 } catch (ParseException e) {
@@ -285,9 +194,9 @@ public class ReaderSceneController {
         return stickyNotesPane;
     }
     public void downFontSize() throws IOException {
-        if(account.fontSize>=1){
-            account.fontSize-=1;
-            fonts=changeFont(fontSizes.get((int)account.fontSize)-fontSizes.get((int)account.fontSize+1),fonts);
+        if((Long)account.generalldata.fontSize>=1){
+            account.generalldata.fontSize-=1;
+            fonts=changeFont((fontSizes.get(account.generalldata.fontSize))-fontSizes.get(account.generalldata.fontSize+1),fonts);
             changeFontinText();
         }
     }
@@ -298,9 +207,9 @@ public class ReaderSceneController {
         readerTextArea.getChildren().addAll(textToLabel(this.currentpage));
     }
     public void upFontSize() throws IOException {
-        if(account.fontSize<9){
-            account.fontSize+=1;
-            fonts=changeFont(fontSizes.get((int)account.fontSize)-fontSizes.get((int)account.fontSize-1),fonts);
+        if(account.generalldata.fontSize<9){
+            account.generalldata.fontSize+=1;
+            fonts=changeFont((fontSizes.get(account.generalldata.fontSize))-fontSizes.get((int)account.generalldata.fontSize-1),fonts);
             changeFontinText();
         }
     }
@@ -343,7 +252,7 @@ public class ReaderSceneController {
         });
         return wordLabel;
     }
-    private Vector<Label> textToLabel(Vector<Pair<String,String>> text) throws IOException {
+    private Vector<Label> textToLabel(Vector<Pair<String,String>> text){
         Vector<Label> labels= new Vector<>();
         readerTextArea.getChildren().add(new Text("\n"));
         for(int i=0;i<text.size();i++){
@@ -362,14 +271,14 @@ public class ReaderSceneController {
     }
 
     public void nextPage() throws IOException, ParseException {
-        updateWordsIncoutered(addwordsIncoutered(this.currentpage));
+        account.jsonWritter.updateWordsIncoutered(addwordsIncoutered(this.currentpage));
         readerTextArea.getChildren().clear();
         this.currentpage= pageSplitter.getNextPage();
         System.out.println(this.currentpage);
         readerTextArea.getChildren().addAll(textToLabel(this.currentpage));
     }
     public void prefPage() throws IOException, ParseException {
-        updateWordsIncoutered(addwordsIncoutered(this.currentpage));
+        account.jsonWritter.updateWordsIncoutered(addwordsIncoutered(this.currentpage));
         readerTextArea.getChildren().clear();
         this.currentpage= pageSplitter.getPrefPage();
         System.out.println(this.currentpage);
@@ -400,7 +309,8 @@ public class ReaderSceneController {
         Parent root = fxmlLoader.load();
 
         MainSceneController controller = fxmlLoader.getController();
-        controller.updateWordsIncountered();
+        account.updateWordIncountered();
+        account.updateWordsInbound();
         controller.init();
         Scene scene = new Scene(root);
         String css = Wordbound.class.getResource("styles/mainScene.css").toExternalForm();

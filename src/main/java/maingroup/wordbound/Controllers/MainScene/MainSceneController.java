@@ -74,7 +74,4 @@ public class MainSceneController {
         loadBookScene();
         navSlideBar.setTranslateX(-120);
     }
-    public void updateWordsIncountered() throws IOException, ParseException {
-        account.loadWordsIncoutered();
-    }
 }

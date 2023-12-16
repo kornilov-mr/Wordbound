@@ -22,7 +22,6 @@ public class DeckWords {
     public String bookName;
     private Vector<WordInBound> deck;
     public DeckIndicator indicator;
-    public String wordsInBoundPath=new File("").getAbsolutePath()+"\\src\\main\\java\\maingroup\\wordbound\\userInfo\\wordsInBound.json";
     public DeckWords(Vector<WordInBound> deck,String deckName,String bookName){
         this.deck=deck;
         this.deckName=deckName;
@@ -52,27 +51,7 @@ public class DeckWords {
         deck.getFirst().setAgain();
         ShowOrder();
     }
-    public void saveInJson() throws IOException, ParseException {
-        Object obj = new JSONParser().parse(new FileReader(wordsInBoundPath));
-        JSONObject jo = (JSONObject) obj;
 
-        JSONObject books= (JSONObject) jo.get("books");
-        Iterator<String> booksIterator = books.keySet().iterator();
-
-        JSONObject decks=(JSONObject) books.get(bookName);
-        JSONObject deckJson=(JSONObject) decks.get(deckName);
-        deckJson.remove("wordsInbound");
-        JSONArray words = new JSONArray();
-        for(int i=0;i<deck.size();i++){
-            WordInBound word = (WordInBound) deck.get(i);
-            words.add(word.toJson());
-        }
-        deckJson.put("wordsInbound", words);
-        PrintWriter pw = new PrintWriter(wordsInBoundPath);
-        pw.write(jo.toJSONString());
-        pw.flush();
-        pw.close();
-    }
     public DeckIndicator getIndicator(){
         int red=0;
         int blue=0;

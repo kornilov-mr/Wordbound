@@ -38,7 +38,9 @@ public class WordInBound implements Comparable<WordInBound>{
         nextrepeat=System.currentTimeMillis()+repeats.get(repeatCount);
     }
     public void setAgain(){
-        repeatCount=0;
+        if(repeatCount!=-1){
+            repeatCount=0;
+        }
         nextrepeat=System.currentTimeMillis()+repeats.get(repeatCount);
     }
     public JSONObject toJson(){

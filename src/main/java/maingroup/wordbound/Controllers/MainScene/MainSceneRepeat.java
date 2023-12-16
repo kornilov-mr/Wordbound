@@ -37,11 +37,12 @@ public class MainSceneRepeat{
     private Scene scene;
     private Parent root;
     private Stage stage;
+    public Map<String, Pair<Map<String,DeckWords>,DeckIndicator>> deckInTree= new HashMap<>();
     private Map<String, DeckWords> deckMap= new HashMap<String, DeckWords>();
 
-    public String wordsInBoundPath=new File("").getAbsolutePath()+"\\src\\main\\java\\maingroup\\wordbound\\userInfo\\wordsInBound.json";
     public void loadAccount(AccountClass account){
         this.account=account;
+        this.deckInTree=account.deckInTree;
     }
     public void deckSelect(MouseEvent event) throws IOException, ParseException {
         TreeItem<DeckWords> item = (TreeItem<DeckWords>)vocabularyTree.getSelectionModel().getSelectedItem();
@@ -63,17 +64,20 @@ public class MainSceneRepeat{
 
             RepeatSceneController repeatScene = fxmlLoader.getController();
             repeatScene.loadDeck(selectedDeck);
+            repeatScene.loadAccount(account);
             repeatScene.loadCurrWord();
+            repeatScene.setParent(this);
             scene.getStylesheets().add(css);
             stage.setScene(scene);
             stage.show();
         }
     }
 
+
     public void loadWordInBound(){
         vocabularyTree.setShowRoot(false);
         TreeItem<DeckWords> mainRoot= new TreeItem<>(new DeckWords(new Vector<>(),"null","null"));
-        Iterator<String> booksIterator = account.deckInTree.keySet().iterator();
+        Iterator<String> booksIterator =deckInTree.keySet().iterator();
         while(booksIterator.hasNext()){
             String bookName= booksIterator.next();
 
