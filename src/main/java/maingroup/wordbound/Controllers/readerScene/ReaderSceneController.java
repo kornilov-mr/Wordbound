@@ -1,4 +1,4 @@
-package maingroup.wordbound.Controllers;
+package maingroup.wordbound.Controllers.readerScene;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -139,6 +139,9 @@ public class ReaderSceneController {
         word=word.replaceAll("\n","");
         word=word.toLowerCase();
         word = word.replaceAll("[^\\sa-zA-Z0-9]", "");
+        if(Objects.equals(word,"")){
+            return true;
+        }
         for(int i=0;i<account.wordsIncountered.size();i++){
             if (Objects.equals(account.wordsIncountered.get(i), word)){
                 return true;
@@ -147,21 +150,28 @@ public class ReaderSceneController {
         return false;
     }
 
+    private AnchorPane createTranslationNode(String wordToTranslate) throws IOException
+    {
+//        String wordTranslation=translate("de", "en", wordToTranslate);
+        String wordTranslation= "test";
+        FXMLLoader fxmlLoader = new FXMLLoader(Wordbound.class.getResource("FXML/readerScene/translationNode.fxml"));
+        AnchorPane tranlationPane = fxmlLoader.load();
 
-    private StackPane createTranslationNode(String wordToTranslate) throws IOException {
-        String wordTranslation=translate("de", "en", wordToTranslate);
-        StackPane stickyNotesPane = new StackPane();
-        stickyNotesPane.setPrefSize(200, 200);
-        stickyNotesPane.setStyle("-fx-background-color: yellow;");
-        stickyNotesPane.getChildren().add(new Label(wordTranslation));
-        stickyNotesPane.setOnMouseEntered(new EventHandler<MouseEvent>() {
+        String css = Wordbound.class.getResource("styles/translationNote.css").toExternalForm();
+        tranlationPane.getStylesheets().add(css);
+        TranslationNoteController controller= fxmlLoader.getController();
+        controller.loadAccount(account);
+        controller.setWords(wordToTranslate,wordTranslation, reader.bookName);
+        controller.loadListView();
+        controller.loadListView();
+        tranlationPane.setOnMouseEntered(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 isOnLabel=false;
                 isOnNote=true;
             }
         });
-        stickyNotesPane.setOnMouseExited(new EventHandler<MouseEvent>() {
+        tranlationPane.setOnMouseExited(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 if(isOnLabel==false&& isOnNote==true){
@@ -170,25 +180,9 @@ public class ReaderSceneController {
                 }
             }
         });
-        Button addButton = new Button();
-        addButton.setText("add");
 
-        addButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                try {
-                    account.jsonWritter.updateWordInBountJson(wordToTranslate,wordTranslation,reader.bookName);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                } catch (ParseException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        });
 
-        stickyNotesPane.getChildren().add(addButton);
-
-        return stickyNotesPane;
+        return tranlationPane;
     }
     public void downFontSize() throws IOException {
         if((Long)account.generalldata.fontSize>=1){
@@ -225,16 +219,16 @@ public class ReaderSceneController {
             public void handle(MouseEvent event) {
                 isOnNote=false;
                 isOnLabel=true;
-                StackPane stickyNotesPane= null;
+                AnchorPane translationPane= null;
                 try {
-                    stickyNotesPane = createTranslationNode(word);
+                    translationPane = createTranslationNode(word);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
                 Bounds bnds = wordLabel.localToScreen(wordLabel.getLayoutBounds());
-                double x = bnds.getMinX() - (stickyNotesPane.getWidth() / 2) + (wordLabel.getWidth() / 2);
-                double y = bnds.getMinY() - stickyNotesPane.getHeight();
-                translationNote.getContent().add(stickyNotesPane);
+                double x = bnds.getMinX() - (300) + (wordLabel.getWidth() / 2);
+                double y = bnds.getMinY() - 120;
+                translationNote.getContent().add(translationPane);
                 translationNote.show(wordLabel, x, y);
             }
         });

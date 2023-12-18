@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.text.TextFlow?>
 
-<AnchorPane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: #faf1f1;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="maingroup.wordbound.Controllers.ReaderSceneController">
+<AnchorPane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: #faf1f1;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="maingroup.wordbound.Controllers.readerScene.ReaderSceneController">
    <children>
       <Label fx:id="bookAuthorLabel" layoutX="135.0" layoutY="65.0" prefHeight="18.0" prefWidth="339.0" text="label" />
       <Label fx:id="bookNameLabel" layoutX="135.0" layoutY="25.0" prefHeight="26.0" prefWidth="346.0" text="label" />

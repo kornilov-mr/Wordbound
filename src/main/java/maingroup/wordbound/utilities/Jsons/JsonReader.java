@@ -15,10 +15,7 @@ import org.json.simple.parser.ParseException;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 
 public class JsonReader {
     private final String userDataPath= new File("").getAbsolutePath()+"\\src\\main\\java\\maingroup\\wordbound\\userInfo\\userGenerallData.json";
@@ -90,11 +87,15 @@ public class JsonReader {
         while(booksIterator.hasNext()) {
             String bookname = booksIterator.next();
             JSONObject decks= (JSONObject) books.get(bookname);
+            String realBookName= (String) decks.get("realBookName");
             Iterator<String> decksIterator = decks.keySet().iterator();
             Vector<DeckIndicator> indicators= new Vector<>();
             Map<String, DeckWords> decksInBook = new HashMap<>();
             while(decksIterator.hasNext()){
                 String deckName = decksIterator.next();
+                if(Objects.equals(deckName,"realBookName")){
+                    continue;
+                }
                 Vector<WordInBound> wordInBound= new Vector<>();
 
                 JSONObject deck= (JSONObject) decks.get(deckName);
@@ -104,7 +105,7 @@ public class JsonReader {
                     JSONObject wordInfo= (JSONObject) words.get(i);
                     wordInBound.add(CreateWordInBoundFromJson(wordInfo));
                 }
-                DeckWords currDeck = new DeckWords(wordInBound,deckName,bookname);
+                DeckWords currDeck = new DeckWords(wordInBound,deckName,bookname,realBookName);
                 decksInVector.put(bookname+"::"+deckName,currDeck);
                 decksInBook.put(deckName,currDeck);
                 indicators.add(currDeck.getIndicator());

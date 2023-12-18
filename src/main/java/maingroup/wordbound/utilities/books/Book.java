@@ -19,25 +19,22 @@ import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.util.Pair;
-import maingroup.wordbound.Controllers.ReaderSceneController;
+import maingroup.wordbound.Controllers.readerScene.ReaderSceneController;
 import maingroup.wordbound.Wordbound;
 import maingroup.wordbound.accounts.AccountClass;
 import maingroup.wordbound.bookreaders.Fb2Reader;
 import maingroup.wordbound.utilities.animations.ResizeAnimation;
-import maingroup.wordbound.utilities.repeats.WordInBound;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.*;
-import java.util.concurrent.Flow;
 
 public class Book {
     private final String jsonPath = new File("").getAbsolutePath() + "\\src\\main\\resources\\maingroup\\wordbound\\books\\bookinfo.json";
     public FlowPane content;
     public String coverPath;
-    protected String realBookName;
+    public String realBookName;
     protected long timeLastSeen;
     protected String StorageBookName;
     protected String author;
@@ -161,7 +158,7 @@ public class Book {
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
-        FXMLLoader fxmlLoader = new FXMLLoader(Wordbound.class.getResource("FXML/readerScene.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(Wordbound.class.getResource("FXML/readerScene/readerScene.fxml"));
         Parent root= null;
         try {
             root = fxmlLoader.load();

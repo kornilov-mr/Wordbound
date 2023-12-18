@@ -54,7 +54,7 @@ public class MainSceneRepeat{
             if(selectedDeck.indicator.blue==0&&selectedDeck.indicator.red==0){
                 return;
             }
-            FXMLLoader fxmlLoader = new FXMLLoader(Wordbound.class.getResource("FXML/repeatScene.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(Wordbound.class.getResource("FXML/repeatScene/repeatScene.fxml"));
             root = fxmlLoader.load();
 
             stage = new Stage();
@@ -76,25 +76,27 @@ public class MainSceneRepeat{
 
     public void loadWordInBound(){
         vocabularyTree.setShowRoot(false);
-        TreeItem<DeckWords> mainRoot= new TreeItem<>(new DeckWords(new Vector<>(),"null","null"));
+        TreeItem<DeckWords> mainRoot= new TreeItem<>(new DeckWords(new Vector<>(),"null","null","null"));
         Iterator<String> booksIterator =deckInTree.keySet().iterator();
         while(booksIterator.hasNext()){
             String bookName= booksIterator.next();
 
-            TreeItem<DeckWords> bookNode= new TreeItem<>(new DeckWords(new Vector<>(),bookName,bookName));
+            TreeItem<DeckWords> bookNode= new TreeItem<>(new DeckWords(new Vector<>(),bookName,bookName,bookName));
 
             Pair<Map<String,DeckWords>,DeckIndicator> decksData = account.deckInTree.get(bookName);
             Map<String, DeckWords> decks= decksData.getKey();
 
             Iterator<String> decksIterator = decks.keySet().iterator();
-
+            String realBookName="";
             while(decksIterator.hasNext()){
                 String deckName=decksIterator.next();
                 DeckWords curr_deck= decks.get(deckName);
+                realBookName=curr_deck.realBookName;
                 TreeItem<DeckWords> deckNode = new TreeItem<>(curr_deck);
                 deckNode.setGraphic(curr_deck.createFlowPaneForDeck(curr_deck.getIndicator()));
                 bookNode.getChildren().add(deckNode);
             }
+            bookNode.getValue().deckName=realBookName;
             bookNode.setGraphic(bookNode.getValue().createFlowPaneForDeck(decksData.getValue()));
             mainRoot.getChildren().add(bookNode);
         }

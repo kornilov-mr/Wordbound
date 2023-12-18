@@ -61,7 +61,7 @@ public class JsonWritter {
             pw.close();
         }
     }
-    public void addNewBookToWordInBoundJson(String bookName) throws IOException, ParseException {
+    public void addNewBookToWordInBoundJson(String bookName,String realBookName) throws IOException, ParseException {
         Object obj = new JSONParser().parse(new FileReader(wordsInBoundPath));
         JSONObject jo = (JSONObject) obj;
 
@@ -69,9 +69,11 @@ public class JsonWritter {
         JSONObject deckJson= new JSONObject();
         JSONObject wordinboundJson = new JSONObject();
 
+
         wordinboundJson.put("wordCount",0);
         wordinboundJson.put("wordsInbound",new JSONArray());
         deckJson.put("default",wordinboundJson);
+        deckJson.put("realBookName",realBookName);
         books.put(bookName,deckJson);
         jo.remove("books");
         jo.put("books",books);
@@ -80,7 +82,24 @@ public class JsonWritter {
         pw.flush();
         pw.close();
     }
-    public void updateWordInBountJson(String originalWord, String wordTranslation,String bookName) throws IOException, ParseException {
+    public void addNewDeckToWordInBoundJson(String deckName,String bookName) throws IOException, ParseException {
+        Object obj = new JSONParser().parse(new FileReader(wordsInBoundPath));
+        JSONObject jo = (JSONObject) obj;
+
+        JSONObject books= (JSONObject) jo.get("books");
+        JSONObject deckJson= (JSONObject) books.get(bookName);
+
+        JSONObject wordinboundJson = new JSONObject();
+        wordinboundJson.put("wordCount",0);
+        wordinboundJson.put("wordsInbound",new JSONArray());
+
+        deckJson.put(deckName,wordinboundJson);
+        PrintWriter pw = new PrintWriter(wordsInBoundPath);
+        pw.write(jo.toJSONString());
+        pw.flush();
+        pw.close();
+    }
+    public void updateWordInBountJson(String originalWord, String wordTranslation,String bookName,String deckName) throws IOException, ParseException {
 
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
         LocalDateTime data = LocalDateTime.now();
@@ -92,7 +111,7 @@ public class JsonWritter {
 
         JSONObject curr_book = (JSONObject) books.get(bookName);
 
-        JSONObject deck = (JSONObject) curr_book.get("default");
+        JSONObject deck = (JSONObject) curr_book.get(deckName);
 
         JSONArray wordsInbound = (JSONArray) deck.get("wordsInbound");
 

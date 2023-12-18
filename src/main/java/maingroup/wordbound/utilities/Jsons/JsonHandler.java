@@ -79,13 +79,16 @@ public class JsonHandler {
             JSONObject bookJson= new JSONObject();
             while(bookIterator.hasNext()){
                 String bookName= bookIterator.next();
+                Book currBook = bookset.get(bookName);
                 JSONObject deckJson= new JSONObject();
                 JSONObject wordinboundJson = new JSONObject();
 
                 wordinboundJson.put("wordCount",0);
                 wordinboundJson.put("wordsInbound",new JSONArray());
                 deckJson.put("default",wordinboundJson);
+                deckJson.put("realBookName",currBook.realBookName);
                 bookJson.put(bookName,deckJson);
+
             }
             jo.put("books",bookJson);
 

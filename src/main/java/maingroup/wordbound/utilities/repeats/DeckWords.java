@@ -20,9 +20,11 @@ import java.util.Vector;
 public class DeckWords {
     public String deckName;
     public String bookName;
+    public String realBookName;
     public Vector<WordInBound> deck;
     public DeckIndicator indicator;
-    public DeckWords(Vector<WordInBound> deck,String deckName,String bookName){
+    public DeckWords(Vector<WordInBound> deck,String deckName,String bookName, String realBookName){
+        this.realBookName=realBookName;
         this.deck=deck;
         this.deckName=deckName;
         this.bookName=bookName;

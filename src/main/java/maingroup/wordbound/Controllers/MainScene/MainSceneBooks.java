@@ -1,53 +1,17 @@
 package maingroup.wordbound.Controllers.MainScene;
 
-import javafx.animation.FadeTransition;
-import javafx.animation.SequentialTransition;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
-import javafx.geometry.HPos;
-import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TreeItem;
-import javafx.scene.effect.ColorAdjust;
-import javafx.scene.effect.DropShadow;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
-import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.util.Duration;
-import javafx.util.Pair;
-import maingroup.wordbound.Controllers.ReaderSceneController;
-import maingroup.wordbound.Wordbound;
 import maingroup.wordbound.accounts.AccountClass;
 import maingroup.wordbound.bookreaders.Fb2Reader;
-import maingroup.wordbound.utilities.animations.ResizeAnimation;
 import maingroup.wordbound.utilities.books.Book;
-import maingroup.wordbound.utilities.books.BookSet;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import javax.swing.text.FlowView;
-import java.awt.image.BufferedImage;
 import javafx.scene.control.ScrollPane;
 import java.io.*;
-import java.net.URL;
-import java.util.Iterator;
-import java.util.ResourceBundle;
 import java.util.Vector;
 
 public class MainSceneBooks {
