@@ -61,15 +61,17 @@ public class TranslationNoteController {
     }
     public void addWordInBound() throws IOException, ParseException {
         String selectedDeck=listViewForDecks.getSelectionModel().getSelectedItem();
+        int idWordInBound=0;
         if(selectedDeck==null){
             selectedDeck="default";
         }
         if(pullContext.isSelected()){
-            account.jsonWritter.updateWordInBountJson(originalWord,translatedWord,bookName,selectedDeck,context);
+            idWordInBound=account.jsonWritter.updateWordInBountJson(originalWord,translatedWord,bookName,selectedDeck,context);
         }else{
-            account.jsonWritter.updateWordInBountJson(originalWord,translatedWord,bookName,selectedDeck,"null");
+            idWordInBound=account.jsonWritter.updateWordInBountJson(originalWord,translatedWord,bookName,selectedDeck,"null");
         }
         controller.defaultDeck=selectedDeck;
+        controller.createAddNote(originalWord,translatedWord,selectedDeck,idWordInBound);
         controller.closeNote();
 
     }

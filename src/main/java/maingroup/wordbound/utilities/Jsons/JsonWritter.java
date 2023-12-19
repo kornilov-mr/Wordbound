@@ -114,7 +114,30 @@ public class JsonWritter {
         pw.flush();
         pw.close();
     }
-    public void updateWordInBountJson(String originalWord, String wordTranslation,String bookName,String deckName,String context) throws IOException, ParseException {
+    public void changeWordInbound(String originalWord, String wordTranslation,String bookName,String deckName,int idWordinBound) throws IOException, ParseException {
+
+        Object obj = new JSONParser().parse(new FileReader(wordsInBoundPath));
+        JSONObject jo = (JSONObject) obj;
+
+        JSONObject books= (JSONObject) jo.get("books");
+
+        JSONObject curr_book = (JSONObject) books.get(bookName);
+
+        JSONObject deck = (JSONObject) curr_book.get(deckName);
+
+        JSONArray wordsInbound = (JSONArray) deck.get("wordsInbound");
+        JSONObject wordInbound = (JSONObject) wordsInbound.get(idWordinBound-1);
+        wordInbound.remove("originalWord");
+        wordInbound.remove("wordTranslation");
+        wordInbound.put("originalWord",originalWord);
+        wordInbound.put("wordTranslation",wordTranslation);
+
+        PrintWriter pw = new PrintWriter(wordsInBoundPath);
+        pw.write(jo.toJSONString());
+        pw.flush();
+        pw.close();
+    }
+    public int updateWordInBountJson(String originalWord, String wordTranslation,String bookName,String deckName,String context) throws IOException, ParseException {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
         LocalDateTime data = LocalDateTime.now();
 
@@ -153,6 +176,7 @@ public class JsonWritter {
         pw.write(jo.toJSONString());
         pw.flush();
         pw.close();
+        return (int)wordCount+1;
     }
 
     public void updateWordsIncoutered(Vector<String> words) throws IOException, ParseException {

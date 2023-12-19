@@ -63,6 +63,8 @@ public class ReaderSceneController {
     private Label pageIndicator;
     @FXML
     private TextField pageSelector;
+    @FXML
+    private AnchorPane addNotePane;
     public String defaultDeck;
     public Fb2Reader reader;
     private PageSplitter pageSplitter;
@@ -82,7 +84,34 @@ public class ReaderSceneController {
     public Map<String,Font> fonts = new HashMap<>();
     private Vector<Pair<String,String>> currentpage;
     private AccountClass account;
-
+    private Vector<AnchorPane> addNotes= new Vector<>();
+    public void showAddNotes(){
+        addNotePane.getChildren().clear();
+        int Vgap =20;
+        int y=20;
+        int paneSz=100;
+        for(int i=addNotes.size()-1;i>=addNotes.size()-5&&i>=0;i--){
+            AnchorPane addNote= addNotes.get(i);
+            addNote.setLayoutX(20);
+            addNote.setLayoutY(y);
+            addNotePane.getChildren().add(addNote);
+            y+=paneSz;
+        }
+    }
+    public void createAddNote(String firstWord,String secondWord,String deckName,int idWordInBound) throws IOException {
+        AnchorPane addNote = loadAddNote(firstWord,secondWord,deckName,idWordInBound);
+        addNotes.add(addNote);
+        showAddNotes();
+    }
+    public AnchorPane loadAddNote(String firstWord,String secondWord,String deckName,int idWordInBound) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(Wordbound.class.getResource("FXML/readerScene/addNote.fxml"));
+        AnchorPane addNote = fxmlLoader.load();
+        AddNoteController controller = fxmlLoader.getController();
+        controller.loadAccount(account);
+        controller.loadWords(firstWord,secondWord);
+        controller.loadCardData(reader.bookName,deckName,idWordInBound);
+        return addNote;
+    }
     public Map<String,Font> changeFont(int n,Map<String,Font> fonts) {
         Map<String, Font> newFonts= new HashMap<>();
 
@@ -412,7 +441,7 @@ public class ReaderSceneController {
         account.jsonWritter.updateBookData(reader.bookName,pageSplitter.pageCount,defaultDeck);
 
         controller.init();
-        Scene scene = new Scene(root);
+        Scene scene = new   Scene(root);
         String css = Wordbound.class.getResource("styles/mainScene.css").toExternalForm();
         scene.getStylesheets().add(css);
         stage.setTitle("Wordbound");

@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="100.0" prefWidth="250.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="maingroup.wordbound.Controllers.readerScene.AddNoteController">
    <children>
-      <Label layoutX="272.0" layoutY="151.0" text="Label" />
+      <TextField fx:id="firstWordField" layoutX="15.0" layoutY="14.0" onAction="#changeWordInBound" />
+      <TextField fx:id="secondWordField" layoutX="15.0" layoutY="61.0" onAction="#changeWordInBound" />
+      <Separator layoutY="50.0" prefHeight="3.0" prefWidth="250.0" />
    </children>
 </AnchorPane>

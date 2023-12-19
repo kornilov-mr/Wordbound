@@ -20,20 +20,14 @@ public class PageSplitter {
     private int closeIndex; //Indexes between < and > for targeting tag
     private int paneWidth;
     public int maxPage=0;
+    public Vector<Pair<Vector<Pair<String,String>>,Integer>> pages = new Vector<>();
     private Vector<String> tagspattern = new Vector<String>();
-    private double hidthOfOneLine;
     private int paneHigth;
     private String text;
     private Map<String,Font> fonts;
     public int pageCount =0;
-    private int lineCount=0;
     private Vector<Pair<String, String>> curr_page;
-    private int prefLineCount=0;
-    private int nextLineCount=0;
-    private long charCount=0;
     private long charCountPoint=0;
-    private Vector<Pair<String,String>> lines;
-
     public Map<String, String> tagsExist = Stream.of(new String[][]{
             {"p", "p"},
             {"body", "b"},
@@ -45,18 +39,16 @@ public class PageSplitter {
 
     public PageSplitter(Fb2Reader bookReader,Map<String,Font> FontsTotag) {
         this.paneHigth = 400;
-        this.paneWidth = 550;
+        this.paneWidth = 600;
         this.text = bookReader.getText();
         this.openFinder = new SymbolFinder('<', this.text);
         this.closeFinder = new SymbolFinder('>', this.text);
 
-        //set the current closeIndex and openIndex to the first tag in the line
         this.closeIndex = closeFinder.nextSymbol();
         this.openIndex = openFinder.nextSymbol();
 
         this.fonts = FontsTotag;
-        hidthOfOneLine = (double) (FontsTotag.get("p").getStringBounds(" ", frc).getHeight() * 1.5);
-        this.lines= getLines();
+        this.pages = getPages();
     }
 
     private String getSubString(int l, int r) {
@@ -72,7 +64,7 @@ public class PageSplitter {
     private Vector<Pair<String,String>> splitTextOnLine(String textInTag,Vector<String> tags) {
 
         String curr_text = "";
-        int CurrTextWidth = 0;
+        int CurrTextWidth = 20;
 
         String[] words = textInTag.split(" ");
         Vector<Pair<String,String>> lines = new Vector<Pair<String,String>>();
@@ -93,7 +85,7 @@ public class PageSplitter {
                 lines.add(new Pair<>(curr_text,currTag));
 
                 curr_text = words[i];
-                CurrTextWidth = currWordWidth;
+                CurrTextWidth = currWordWidth+20;
             } else {
 
                 curr_text += " " + words[i];
@@ -107,115 +99,60 @@ public class PageSplitter {
 
 
     public Vector<Pair<String,String>> getPrefPage() {
-        Vector<Pair<String,String>> current= new Vector<Pair<String,String>>();
-        double highCount=0;
-        lineCount=prefLineCount;
-        nextLineCount=lineCount+1;
-
-        while(highCount<=paneHigth&&lineCount<lines.size()&&lineCount>=0){
-            String curr_tag=lines.get(lineCount).getValue();
-            double currLineHigth=0;
-            if(Objects.equals(lines.get(lineCount).getKey(),new String())){
-                 currLineHigth=(double) (fonts.get(curr_tag).getStringBounds("", frc).getHeight() );
-            }else{
-                 currLineHigth=(double) (fonts.get(curr_tag).getStringBounds("", frc).getHeight() * 1.5);
-
-            }
-            if(highCount+currLineHigth>paneHigth){
-                break;
-            }
-            highCount+=currLineHigth;
-            current.add(lines.get(lineCount));
-            charCount-=lines.get(lineCount).getKey().length();
-            lineCount-=1;
-        }
-        Vector<Pair<String,String>> page= new Vector<>();
-        for(int i=current.size()-1;i>=0;i--){
-            page.add(current.get(i));
-        }
         pageCount-=1;
-        charCountPoint=charCount;
-
-        curr_page=page;
-        prefLineCount=lineCount;
-        return page;
+        charCountPoint=pages.get(pageCount).getValue();
+        return pages.get(pageCount).getKey();
     }
     public Vector<Pair<String,String>> getNextPage() {
-        Vector<Pair<String,String>> current= new Vector<Pair<String,String>>();
-        double highCount=0;
-        lineCount=nextLineCount;
-        charCountPoint=charCount+1;
-        prefLineCount=lineCount-1;
-        while(highCount<=paneHigth&&lineCount<lines.size()){
-            String curr_tag=lines.get(lineCount).getValue();
-            double currLineHigth=(double) (fonts.get(curr_tag).getStringBounds(" ", frc).getHeight() *1.5);
-            if(highCount+currLineHigth>paneHigth){
-                break;
-            }
-            highCount+=currLineHigth;
-            current.add(lines.get(lineCount));
-            charCount+=lines.get(lineCount).getKey().length();
-            lineCount+=1;
-        }
-        charCount+=1;
         pageCount+=1;
-        curr_page=lines;
-        nextLineCount=lineCount;
-
-        return current;
-
+        charCountPoint=pages.get(pageCount).getValue();
+        return pages.get(pageCount).getKey();
+    }
+    public Vector<Pair<String, String>> getPageByN(long pageN){
+        pageCount=(int)pageN;
+        charCountPoint=pages.get(pageCount).getValue();
+        return pages.get(pageCount).getKey();
     }
 
     public Vector<Pair<String, String>> setFontSizeInText(Map<String,Font> newFonts){
         this.fonts=newFonts;
-        long currCharCount=0;
-        int lineCounts=0;
-        this.lineCount=0;
         this.openFinder = new SymbolFinder('<', this.text);
         this.closeFinder = new SymbolFinder('>', this.text);
-
-        //set the current closeIndex and openIndex to the first tag in the line
         this.closeIndex = closeFinder.nextSymbol();
         this.openIndex = openFinder.nextSymbol();
-        this.lines=getLines();
-        while(currCharCount<charCountPoint){
-            currCharCount+=lines.get(lineCounts).getKey().length();
-            lineCounts+=1;
-        }
-        nextLineCount=lineCounts;
-        charCount=currCharCount;
-        return getNextPage();
-
+        this.pages= getPages();
+        int neeedPage=0;
+        while(pages.get(neeedPage).getValue()<charCountPoint) neeedPage++;
+        pageCount=neeedPage-1;
+        return pages.get(neeedPage-1).getKey();
     }
-    public Vector<Pair<String, String>> getPageByN(long pageN){
-        int steps= (int) (Math.abs(pageN-pageCount));
-        Vector<Pair<String,String>> page = new Vector<>();
-        if(pageCount<pageN){
-            for(int i=0;i<steps;i++){
-                page=getNextPage();
-            }
-        }else if(pageCount>pageN){
-            for(int i=0;i<steps;i++){
-                page=getPrefPage();
-            }
-        }
-        return page;
-    }
+    public Vector<Pair<Vector<Pair<String,String>>,Integer>> getPages(){
+        Vector<Pair<String,String>> lines = getLines();
+        Vector<Pair<Vector<Pair<String,String>>,Integer>> pages= new Vector<>();
+        double highCount=0;
+        int charCount=0;
+        Iterator<Pair<String,String>> linesInterator= lines.iterator();
+        while(linesInterator.hasNext()){
+            Vector<Pair<String,String>> currPage = new Vector<>();
+            highCount=0;
+            while(highCount<=paneHigth&&linesInterator.hasNext()){
+                Pair<String,String> currLine= linesInterator.next();
+                String curr_tag=currLine.getValue();
+                double currLineHigth=(double) (fonts.get(curr_tag).getStringBounds(" ", frc).getHeight() *1.5);
 
-    private String createPageFromLines(Vector<String> lines, boolean reverse) {
-        String page = "";
-        if (reverse) {
-            for (int i = 0; i < (int) (this.paneHigth / hidthOfOneLine); i++) {
-                page += lines.removeLast() + "\n";
+                highCount+=currLineHigth;
+                charCount+=currLine.getKey().length();
+                currPage.add(currLine);
+                if(highCount+currLineHigth>paneHigth){
+                    break;
+                }
             }
-        } else {
-            for (int i = 0; i < (int) (this.paneHigth / hidthOfOneLine); i++) {
-                page += lines.removeFirst() + "\n";
-            }
+            pages.add(new Pair<>(currPage,charCount));
         }
-        return page;
-    }
+        maxPage=pages.size();
 
+        return pages;
+    }
     public Vector<Pair<String,String>> getLines() {
         double hightCount=0;
         Vector<Pair<String,String>> lines= new Vector<>();
