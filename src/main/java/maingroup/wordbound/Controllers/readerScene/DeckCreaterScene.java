@@ -38,6 +38,7 @@ public class DeckCreaterScene {
         }else{
             account.jsonWritter.addNewDeckToWordInBoundJson(newDeckName,bookName);
             controller.loadListView();
+            controller.lastDeck=newDeckName;
             Stage stage;
             stage = (Stage) mainPane.getScene().getWindow();
             stage.close();

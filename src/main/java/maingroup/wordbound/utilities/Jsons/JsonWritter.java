@@ -61,6 +61,21 @@ public class JsonWritter {
             pw.close();
         }
     }
+    public void updateBookData(String BookName, int lastPage, String lastDeck) throws IOException, ParseException {
+        Object obj = new JSONParser().parse(new FileReader(bookJsonPath));
+        JSONObject jo = (JSONObject) obj;
+        JSONObject booksInfo = (JSONObject) jo.get("books");
+        JSONObject bookInfo= (JSONObject) booksInfo.get(BookName);
+        bookInfo.remove("lastPage");
+        bookInfo.remove("lastDeck");
+        bookInfo.put("lastPage",lastPage);
+        bookInfo.put("lastDeck",lastDeck);
+        PrintWriter pw = new PrintWriter(bookJsonPath);
+        pw.write(jo.toJSONString());
+        pw.flush();
+        pw.close();
+
+    }
     public void addNewBookToWordInBoundJson(String bookName,String realBookName) throws IOException, ParseException {
         Object obj = new JSONParser().parse(new FileReader(wordsInBoundPath));
         JSONObject jo = (JSONObject) obj;
@@ -99,8 +114,7 @@ public class JsonWritter {
         pw.flush();
         pw.close();
     }
-    public void updateWordInBountJson(String originalWord, String wordTranslation,String bookName,String deckName) throws IOException, ParseException {
-
+    public void updateWordInBountJson(String originalWord, String wordTranslation,String bookName,String deckName,String context) throws IOException, ParseException {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
         LocalDateTime data = LocalDateTime.now();
 
@@ -122,8 +136,9 @@ public class JsonWritter {
         boundData.put("time",dtf.format(data));
         boundData.put("realTime",System.currentTimeMillis());
         boundData.put("nextrepeat",System.currentTimeMillis());
-
-        boundData.put("deck","default");
+        if(!Objects.equals(context,"null")){
+            boundData.put("context",context);
+        }
 
         boundData.put("repeatCount",-1);
 

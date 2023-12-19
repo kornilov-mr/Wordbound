@@ -1,5 +1,7 @@
 package maingroup.wordbound.Controllers.readerScene;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -9,6 +11,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.TextField;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
@@ -22,6 +27,7 @@ import maingroup.wordbound.Wordbound;
 import maingroup.wordbound.accounts.AccountClass;
 import maingroup.wordbound.bookreaders.Fb2Reader;
 import maingroup.wordbound.utilities.pageSplit.PageSplitter;
+import maingroup.wordbound.utilities.repeats.DeckWords;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -34,11 +40,8 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Vector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -48,6 +51,7 @@ public class ReaderSceneController {
     private boolean isOnLabel;
 
     private boolean isOnNote;
+    private boolean isOnCombo=false;
     public Popup translationNote = new Popup();
     @FXML
     private Label bookNameLabel;
@@ -55,6 +59,11 @@ public class ReaderSceneController {
     private Label bookAuthorLabel;
     @FXML
     private TextFlow readerTextArea;
+    @FXML
+    private Label pageIndicator;
+    @FXML
+    private TextField pageSelector;
+    public String defaultDeck;
     public Fb2Reader reader;
     private PageSplitter pageSplitter;
     private final Map<Integer,Integer> fontSizes= Stream.of(new int[][]{
@@ -107,7 +116,9 @@ public class ReaderSceneController {
 
         fonts=changeFont(fontSizes.get((int)account.generalldata.fontSize),fonts);
         this.pageSplitter= new PageSplitter(reader,fonts);
-        nextPage();
+        this.defaultDeck= reader.lastDeck;
+//        nextPage();
+        pageIndicator.setText(String.valueOf(pageSplitter.maxPage));
     }
 
 
@@ -149,21 +160,78 @@ public class ReaderSceneController {
         }
         return false;
     }
+    private Set<String> getDecks(){
+        Map<String, DeckWords> deckInTree= account.deckInTree.get(reader.bookName).getKey();
+        Set<String> decks =  deckInTree.keySet();
+        return decks;
+    }
 
-    private AnchorPane createTranslationNode(String wordToTranslate) throws IOException
+    private AnchorPane createTranslationNode(String wordToTranslate,String context) throws IOException
     {
 //        String wordTranslation=translate("de", "en", wordToTranslate);
         String wordTranslation= "test";
         FXMLLoader fxmlLoader = new FXMLLoader(Wordbound.class.getResource("FXML/readerScene/translationNode.fxml"));
         AnchorPane tranlationPane = fxmlLoader.load();
 
+        DropShadow dropShadow = new DropShadow();
+        dropShadow.setRadius(5.0);
+        dropShadow.setOffsetX(15.0);
+        dropShadow.setOffsetY(15.0);
+        dropShadow.setColor(new javafx.scene.paint.Color(0.2, 0.2, 0.2, 1));
+        tranlationPane.setEffect(dropShadow);
+        tranlationPane.setId("translationNote");
         String css = Wordbound.class.getResource("styles/translationNote.css").toExternalForm();
         tranlationPane.getStylesheets().add(css);
         TranslationNoteController controller= fxmlLoader.getController();
         controller.loadAccount(account);
-        controller.setWords(wordToTranslate,wordTranslation, reader.bookName);
-        controller.loadListView();
-        controller.loadListView();
+        controller.setParent(this);
+        controller.setWords(wordToTranslate,wordTranslation, reader.bookName,context);
+        controller.listViewForDecks.getItems().addAll(getDecks());
+        controller.listViewForDecks.getSelectionModel().select(defaultDeck);
+        controller.listViewForDecks.setOnMouseEntered(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                isOnCombo=true;
+                isOnLabel=false;
+                isOnNote=true;
+            }
+        });
+        controller.listViewForDecks.setOnMouseExited(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                isOnCombo=false;
+            }
+        });
+        controller.listViewForDecks.setCellFactory(lv -> {
+            ListCell<String> cell = new ListCell<String>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    setText(empty ? null : item);
+                }
+            };
+            cell.setOnMouseEntered(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent mouseEvent) {
+                    isOnCombo=true;
+                    isOnLabel=false;
+                    isOnNote=true;
+                }
+            });
+            cell.setOnMouseExited(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent mouseEvent) {
+                    if(isOnLabel==false&& isOnNote==false){
+                        isOnCombo=false;
+                        System.out.println("test");
+                        translationNote.hide();
+                        translationNote=new Popup();
+                    }
+                }
+            });
+            return cell ;
+        });
+
         tranlationPane.setOnMouseEntered(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
@@ -174,7 +242,7 @@ public class ReaderSceneController {
         tranlationPane.setOnMouseExited(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                if(isOnLabel==false&& isOnNote==true){
+                if(isOnLabel==false&& isOnNote==true&& isOnCombo==false){
                     translationNote.hide();
                     translationNote=new Popup();
                 }
@@ -187,7 +255,7 @@ public class ReaderSceneController {
     public void downFontSize() throws IOException {
         if((Long)account.generalldata.fontSize>=1){
             account.generalldata.fontSize-=1;
-            fonts=changeFont((fontSizes.get(account.generalldata.fontSize))-fontSizes.get(account.generalldata.fontSize+1),fonts);
+            fonts=changeFont((fontSizes.get((int)account.generalldata.fontSize))-fontSizes.get((int)account.generalldata.fontSize+1),fonts);
             changeFontinText();
         }
     }
@@ -196,15 +264,17 @@ public class ReaderSceneController {
         readerTextArea.getChildren().clear();
         System.out.println(this.currentpage);
         readerTextArea.getChildren().addAll(textToLabel(this.currentpage));
+        pageIndicator.setText(String.valueOf(pageSplitter.maxPage));
+
     }
     public void upFontSize() throws IOException {
         if(account.generalldata.fontSize<9){
             account.generalldata.fontSize+=1;
-            fonts=changeFont((fontSizes.get(account.generalldata.fontSize))-fontSizes.get((int)account.generalldata.fontSize-1),fonts);
+            fonts=changeFont((fontSizes.get((int)account.generalldata.fontSize))-fontSizes.get((int)account.generalldata.fontSize-1),fonts);
             changeFontinText();
         }
     }
-    private Label createWordLabel(String word,String tag) {
+    private Label createWordLabel(String word,String tag,String context) {
         Label wordLabel = new Label(word);
         Font currFont= fonts.get(tag);
         wordLabel.setStyle("-fx-font-size:"+ currFont.getSize() +"px;");
@@ -221,7 +291,7 @@ public class ReaderSceneController {
                 isOnLabel=true;
                 AnchorPane translationPane= null;
                 try {
-                    translationPane = createTranslationNode(word);
+                    translationPane = createTranslationNode(word,context);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -246,14 +316,44 @@ public class ReaderSceneController {
     private Vector<Label> textToLabel(Vector<Pair<String,String>> text){
         Vector<Label> labels= new Vector<>();
         readerTextArea.getChildren().add(new Text("\n"));
+        int wordsCount=0;
+        Vector<Pair<String, Integer>> context= new Vector<>();
+        String content="";
+        for(int i=0;i<text.size();i++){
+            String[] words= text.get(i).getKey().split(" ");
+            for(int j=0;j<words.length;j++){
+                wordsCount+=1;
+                String currWord= words[j];
+                content+=currWord+" ";
+                if(!Objects.equals(currWord,"")){
+                    if(currWord.charAt(currWord.length()-1)=='.'||currWord.charAt(currWord.length()-1)==':'||Objects.equals(currWord,"/n")) {
+                        context.add(new Pair<>(content,wordsCount));
+                        content="";
+                    }
+                }
+            }
+        }
+        context.add(new Pair<>(content,wordsCount));
+        int contextCount=0;
+        content=context.get(0).getKey();
+        wordsCount=0;
         for(int i=0;i<text.size();i++){
 
             String tag=text.get(i).getValue();
             String[] words= text.get(i).getKey().split(" ");
+
+
             readerTextArea.getChildren().add(new Text("   "));
             for(int j=0;j<words.length;j++){
-                readerTextArea.getChildren().add(createWordLabel(words[j],tag));
-                readerTextArea.getChildren().add(new Text(" "));
+                wordsCount++;
+                if(wordsCount>context.get(contextCount).getValue()){
+                    contextCount+=1;
+                    content=context.get(contextCount).getKey();
+                }
+                if(!Objects.equals(words[j],"/n")) {
+                    readerTextArea.getChildren().add(createWordLabel(words[j], tag, content));
+                    readerTextArea.getChildren().add(new Text(" "));
+                }
             }
             readerTextArea.getChildren().add(new Text("\n"));
             labels.add(new Label(""));
@@ -268,6 +368,8 @@ public class ReaderSceneController {
         this.currentpage= pageSplitter.getNextPage();
         System.out.println(this.currentpage);
         readerTextArea.getChildren().addAll(textToLabel(this.currentpage));
+        pageSelector.setText(String.valueOf(pageSplitter.pageCount));
+
     }
     public void prefPage() throws IOException, ParseException {
         account.jsonWritter.updateWordsIncoutered(addwordsIncoutered(this.currentpage));
@@ -276,6 +378,8 @@ public class ReaderSceneController {
         this.currentpage= pageSplitter.getPrefPage();
         System.out.println(this.currentpage);
         readerTextArea.getChildren().addAll(textToLabel(this.currentpage));
+        pageSelector.setText(String.valueOf(pageSplitter.pageCount));
+
     }
     private static String translate(String langFrom, String langTo, String text) throws IOException {
         // INSERT YOU URL HERE
@@ -304,6 +408,9 @@ public class ReaderSceneController {
         MainSceneController controller = fxmlLoader.getController();
         account.updateWordIncountered();
         account.updateWordsInbound();
+
+        account.jsonWritter.updateBookData(reader.bookName,pageSplitter.pageCount,defaultDeck);
+
         controller.init();
         Scene scene = new Scene(root);
         String css = Wordbound.class.getResource("styles/mainScene.css").toExternalForm();
@@ -311,5 +418,32 @@ public class ReaderSceneController {
         stage.setTitle("Wordbound");
         stage.setScene(scene);
         stage.show();
+    }
+    public void startFromPageN(long n){
+        readerTextArea.getChildren().clear();
+        this.currentpage= pageSplitter.getPageByN(n);
+        System.out.println(this.currentpage);
+        readerTextArea.getChildren().addAll(textToLabel(this.currentpage));
+        pageSelector.setText(String.valueOf(pageSplitter.pageCount));
+        pageSelector.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue,
+                                String newValue) {
+                if (!newValue.matches("\\d*")) {
+                    pageSelector.setText(newValue.replaceAll("[^\\d]", ""));
+                }
+            }
+        });
+    }
+    public void closeNote(){
+        translationNote.hide();
+        translationNote=new Popup();
+        isOnNote=false;
+        isOnLabel=false;
+    }
+    public void selectPage(){
+        int neededPage = (int) Long.parseLong(String.valueOf(pageSelector.getText()));
+        startFromPageN(neededPage);
+
     }
 }

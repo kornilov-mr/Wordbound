@@ -28,7 +28,9 @@ public class Bookdata {
         info.put("dirPath", this.bookdirPath);
         info.put("charset", this.charset);
         info.put("timeLastSeen", System.currentTimeMillis());
-        info.put("lastPage", 0);
+        info.put("lastPage", 1);
+        info.put("lastDeck","default");
+        info.put("pullContext",0);
         info.put("coverPath",this.coverPath);
         return info;
     }

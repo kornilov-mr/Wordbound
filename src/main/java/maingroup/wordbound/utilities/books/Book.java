@@ -175,6 +175,7 @@ public class Book {
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
+        readerScene.startFromPageN(fb2Reader.lastPage);
 
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         String css = Wordbound.class.getResource("styles/wordIncountered.css").toExternalForm();

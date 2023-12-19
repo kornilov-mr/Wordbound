@@ -20,6 +20,8 @@
             <Button fx:id="buttonsNextPref" layoutX="240.0" layoutY="32.0" mnemonicParsing="false" onAction="#prefPage" prefHeight="3.0" prefWidth="80.0" text="&lt;" />
             <Button fx:id="buttonsNextPref" layoutX="800.0" layoutY="14.0" mnemonicParsing="false" onAction="#upFontSize" prefHeight="25.0" prefWidth="80.0" text="up Font" />
             <Button fx:id="buttonsNextPref" layoutX="800.0" layoutY="48.0" minWidth="-Infinity" mnemonicParsing="false" onAction="#downFontSize" prefHeight="25.0" prefWidth="80.0" text="down Font" />
+            <Label fx:id="pageIndicator" layoutX="459.0" layoutY="65.0" text="Label" textFill="#bf2020" />
+            <TextField fx:id="pageSelector" layoutX="269.0" layoutY="61.0" onAction="#selectPage" />
          </children>
       </AnchorPane>
       <Button fx:id="buttonsNextPref" layoutX="2.0" layoutY="2.0" mnemonicParsing="false" onAction="#SwitchToMainMenu" prefHeight="34.0" prefWidth="77.0" text="Main menu" />

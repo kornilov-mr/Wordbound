@@ -19,12 +19,13 @@ public class PageSplitter {
     private int openIndex; //Indexes between < and > for targeting tag
     private int closeIndex; //Indexes between < and > for targeting tag
     private int paneWidth;
+    public int maxPage=0;
     private Vector<String> tagspattern = new Vector<String>();
     private double hidthOfOneLine;
     private int paneHigth;
     private String text;
     private Map<String,Font> fonts;
-    private int pageCount = 0;
+    public int pageCount =0;
     private int lineCount=0;
     private Vector<Pair<String, String>> curr_page;
     private int prefLineCount=0;
@@ -186,19 +187,16 @@ public class PageSplitter {
         return getNextPage();
 
     }
-    public Vector<Pair<String, String>> getPageByN(int pageN){
-        int steps=Math.abs(pageN-pageCount)-1;
+    public Vector<Pair<String, String>> getPageByN(long pageN){
+        int steps= (int) (Math.abs(pageN-pageCount));
         Vector<Pair<String,String>> page = new Vector<>();
         if(pageCount<pageN){
             for(int i=0;i<steps;i++){
-                pageCount+=1;
-
                 page=getNextPage();
             }
         }else if(pageCount>pageN){
             for(int i=0;i<steps;i++){
                 page=getPrefPage();
-                pageCount-=1;
             }
         }
         return page;
@@ -219,6 +217,7 @@ public class PageSplitter {
     }
 
     public Vector<Pair<String,String>> getLines() {
+        double hightCount=0;
         Vector<Pair<String,String>> lines= new Vector<>();
         while (openIndex != -1) {
 
@@ -226,13 +225,17 @@ public class PageSplitter {
                 String tagShort = tagsExist.get(getSubString(openIndex, closeIndex));
                 if (tagShort == "e") {
                     lines.add(new Pair<>(new String(),"p"));
+                    double currLineHigth=(double) (fonts.get("p").getStringBounds(" ", frc).getHeight() *1.5);
+                    hightCount+=currLineHigth;
                 } else {
                     tagspattern.add(tagShort);
 
                 }
             } else {
                 tagspattern.remove(tagspattern.size() - 1);
-                lines.add(new Pair<>(new String(),"p"));
+                lines.add(new Pair<>(new String("/n"),"p"));
+                double currLineHigth=(double) (fonts.get("p").getStringBounds(" ", frc).getHeight() *1.5);
+                hightCount+=currLineHigth;
             }
 
             openIndex = this.openFinder.nextSymbol();
@@ -244,12 +247,14 @@ public class PageSplitter {
                 Vector<Pair<String,String>> lineInTag = splitTextOnLine(textInTag,tagspattern);
 
                 int pagesAddition = lineInTag.size();
+                double currLineHigth=(double) (fonts.get(lineInTag.get(0).getValue()).getStringBounds(" ", frc).getHeight() *1.5);
+                hightCount+=currLineHigth*pagesAddition;
                 lines.addAll(lineInTag);
 
             }
             closeIndex = this.closeFinder.nextSymbol();
         }
-
+        maxPage=(int)hightCount/paneHigth+1;
         return lines;
     }
 }

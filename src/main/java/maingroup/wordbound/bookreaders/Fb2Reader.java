@@ -28,6 +28,8 @@ public class Fb2Reader {
     public String autor;
     public String bookdirPath;
     public String coverPath;
+    public String lastDeck="default";
+    public long lastPage=0;
 
     public Fb2Reader(String path, AccountClass account, boolean initialisation) throws IOException, ParseException {
         this.bookPath = path;
@@ -125,6 +127,8 @@ public class Fb2Reader {
             this.realBookName=(String) data.get("realBookName");
             this.bookdirPath=(String) data.get("dirPath");
             this.autor=(String) data.get("author");
+            this.lastDeck=(String) data.get("lastDeck");
+            this.lastPage=(Long) data.get("lastPage");
             this.bookPath=(String) data.get("bookPath");
             this.charset=(String) data.get("charset");
             this.coverPath=(String) data.get("coverPath");
