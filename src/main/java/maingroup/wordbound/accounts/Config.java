@@ -1,9 +1,17 @@
 package maingroup.wordbound.accounts;
 
+import org.json.simple.JSONObject;
+
 public class Config {
     public  long fontSize;
+    public long lastId;
+    public Config() {
 
-    public Config(long fontSize) {
-        this.fontSize = fontSize;
+    }
+    public JSONObject createJson(){
+        JSONObject data = new JSONObject();
+        data.put("fontSize",fontSize);
+        data.put("lastId",lastId);
+        return data;
     }
 }

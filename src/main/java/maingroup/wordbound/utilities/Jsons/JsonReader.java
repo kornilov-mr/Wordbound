@@ -45,7 +45,10 @@ public class JsonReader {
 
         Object obj = new JSONParser().parse(new FileReader(userDataPath));
         JSONObject jo = (JSONObject) obj;
-        return new Config((long) jo.get("fontSize"));
+        Config config= new Config();
+        config.fontSize=(long) jo.get("fontSize");
+        config.lastId=(long) jo.get("lastId");
+        return config;
     }
     public BookSet loadWordsBooks() {
         BookSet bookSet= new BookSet();
@@ -100,11 +103,15 @@ public class JsonReader {
 
                 JSONObject deck= (JSONObject) decks.get(deckName);
                 long wordCount= (long) deck.get("wordCount");
-                JSONArray words =(JSONArray) deck.get("wordsInbound");
-                for(int i=0;i<wordCount;i++){
-                    JSONObject wordInfo= (JSONObject) words.get(i);
-                    wordInBound.add(CreateWordInBoundFromJson(wordInfo));
+                JSONObject words =(JSONObject) deck.get("wordsInbound");
+                Iterator<String> idIterator= words.keySet().iterator();
+                while(idIterator.hasNext()){
+                    String currId= idIterator.next();
+                    JSONObject wordInfo= (JSONObject) words.get(currId);
+                    wordInBound.add(CreateWordInBoundFromJson(wordInfo,currId,"firstCard"));
+                    wordInBound.add(CreateWordInBoundFromJson(wordInfo,currId,"secondCard"));
                 }
+
                 DeckWords currDeck = new DeckWords(wordInBound,deckName,bookname,realBookName);
                 decksInVector.put(bookname+"::"+deckName,currDeck);
                 decksInBook.put(deckName,currDeck);
@@ -126,14 +133,17 @@ public class JsonReader {
         }
         return new DeckIndicator(red,blue,green);
     }
-    private WordInBound CreateWordInBoundFromJson(JSONObject wordInfo){
+    private WordInBound CreateWordInBoundFromJson(JSONObject wordInfos,String id,String key){
+        JSONObject wordInfo= (JSONObject) wordInfos.get(key);
         WordInBound word = new WordInBound((Long) wordInfo.get("realTime"),
                 (Long) wordInfo.get("nextrepeat"),
                 (String) wordInfo.get("deck"),
                 (String) wordInfo.get("originalWord"),
                 (String) wordInfo.get("time"),
                 (String) wordInfo.get("wordTranslation"),
-                (Long) wordInfo.get("repeatCount"));
+                (Long) wordInfo.get("repeatCount"),
+                Long.parseLong(id),
+                key);
         return word;
 
     }

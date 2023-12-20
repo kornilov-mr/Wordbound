@@ -28,10 +28,11 @@ public class AccountClass {
         jsonHandler.checkAndCreateWordsInBound();
         jsonHandler.checkAndCreateIncountered();
         jsonHandler.checkAndCreateUserData();
+        updategeneralldata();
+        jsonWritter.lastId=generalldata.lastId;
         updateWordIncountered();
         updateWordsInbound();
         updateBookset();
-        updategeneralldata();
 
     }
     public void updateWordIncountered() throws IOException, ParseException {

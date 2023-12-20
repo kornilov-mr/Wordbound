@@ -1,12 +1,15 @@
 package maingroup.wordbound.utilities.repeats;
 
+import javafx.util.Pair;
+import maingroup.wordbound.utilities.books.Book;
 import org.json.simple.JSONObject;
 
+import java.util.Comparator;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class WordInBound implements Comparable<WordInBound>{
+public class WordInBound{
     private final Map<Long, Long> repeats= Stream.of(new long[][]{
             {0, 20*60*1000},
             {1, 24*60*60*1000},
@@ -23,8 +26,10 @@ public class WordInBound implements Comparable<WordInBound>{
     public String originalWord;
     public String timeInyyyymmdd;
     public String wordTranslation;
+    public long id;
+    public String key;
     protected long repeatCount;
-    public WordInBound(long realTime, long nextrepeat, String deck, String originalWord,String timeInyyyymmdd,String wordTranslation,long repeatCount){
+    public WordInBound(long realTime, long nextrepeat, String deck, String originalWord,String timeInyyyymmdd,String wordTranslation,long repeatCount,long id,String key){
         this.realTime=realTime;
         this.nextrepeat=nextrepeat;
         this.deck=deck;
@@ -32,6 +37,8 @@ public class WordInBound implements Comparable<WordInBound>{
         this.timeInyyyymmdd=timeInyyyymmdd;
         this.wordTranslation=wordTranslation;
         this.repeatCount=repeatCount;
+        this.id=id;
+        this.key=key;
     }
     public void getGood(){
         repeatCount+=1;
@@ -51,20 +58,10 @@ public class WordInBound implements Comparable<WordInBound>{
         wordInfo.put("time",timeInyyyymmdd);
         wordInfo.put("realTime",realTime);
         wordInfo.put("nextrepeat",nextrepeat);
-
+        wordInfo.put("id",id);
         wordInfo.put("deck",deck);
 
         wordInfo.put("repeatCount",repeatCount);
         return wordInfo;
-    }
-    @Override
-    public int compareTo(WordInBound that) {
-        if(this.nextrepeat>that.nextrepeat){
-            return 1;
-        }else if(this.nextrepeat<that.nextrepeat){
-            return -1;
-        }else{
-            return 0;
-        }
     }
 }

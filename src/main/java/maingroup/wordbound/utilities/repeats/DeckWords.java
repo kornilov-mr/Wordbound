@@ -3,17 +3,21 @@ package maingroup.wordbound.utilities.repeats;
 import javafx.geometry.Orientation;
 import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;
+import javafx.util.Pair;
+import maingroup.wordbound.utilities.books.Book;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.awt.*;
+import java.awt.image.PackedColorModel;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -32,14 +36,15 @@ public class DeckWords {
 
     }
     public void ShowOrder(){
-        Collections.sort(deck);
+        Collections.sort(deck,new SortByNextRepeat());
     }
+    public void saveOrder(){ Collections.sort(deck,new SortById());}
     public WordInBound getNextWord(){
 
         long time= System.currentTimeMillis();
         WordInBound firstWord=deck.getFirst();
         if(time<firstWord.nextrepeat){
-            return new WordInBound(-1,-1,firstWord.deck,"-1","-1","-1",0);
+            return new WordInBound(-1,-1,firstWord.deck,"-1","-1","-1",0,-1,"first");
         }else{
             return deck.getFirst();
         }
@@ -83,5 +88,27 @@ public class DeckWords {
         flow.getChildren().add(indicator.createIndicator());
         flow.setId("deckFlow");
         return flow;
+    }
+}
+class SortByNextRepeat implements Comparator<WordInBound> {
+    public int compare(WordInBound p1, WordInBound p2) {
+        if(p1.nextrepeat>p2.nextrepeat){
+            return 1;
+        }else if(p1.nextrepeat<p2.nextrepeat){
+            return -1;
+        }else{
+            return 0;
+        }
+    }
+}
+class SortById implements Comparator<WordInBound> {
+    public int compare(WordInBound p1, WordInBound p2) {
+        if(p1.id>p2.id){
+            return 1;
+        }else if(p1.id<p2.id){
+            return -1;
+        }else{
+            return 0;
+        }
     }
 }

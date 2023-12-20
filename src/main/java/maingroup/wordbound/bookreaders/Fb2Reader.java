@@ -116,6 +116,8 @@ public class Fb2Reader {
                 Bookdata bookdata= new Bookdata(this.bookPath,this.charset,this.realBookName,this.autor,this.bookdirPath, this.coverPath,this.bookName);
                 account.jsonWritter.addNewBookToWordInBoundJson(this.bookName,this.realBookName);
                 account.jsonWritter.updateJson(bookdata);
+                account.updateWordsInbound();
+
             }
         } else {
 

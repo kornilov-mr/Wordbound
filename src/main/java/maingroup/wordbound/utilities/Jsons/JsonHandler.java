@@ -45,6 +45,7 @@ public class JsonHandler {
             JSONObject jo = new JSONObject();
 
             jo.put("fontSize",6);
+            jo.put("lastId",0);
             PrintWriter pw = new PrintWriter(userDataPath);
             pw.write(jo.toJSONString());
             pw.flush();
@@ -84,7 +85,7 @@ public class JsonHandler {
                 JSONObject wordinboundJson = new JSONObject();
 
                 wordinboundJson.put("wordCount",0);
-                wordinboundJson.put("wordsInbound",new JSONArray());
+                wordinboundJson.put("wordsInbound",new JSONObject());
                 deckJson.put("default",wordinboundJson);
                 deckJson.put("realBookName",currBook.realBookName);
                 bookJson.put(bookName,deckJson);

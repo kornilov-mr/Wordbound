@@ -11,6 +11,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import java.net.URL;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
@@ -36,8 +37,12 @@ import org.json.simple.parser.ParseException;
 import java.awt.*;
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -195,10 +200,8 @@ public class ReaderSceneController {
         return decks;
     }
 
-    private AnchorPane createTranslationNode(String wordToTranslate,String context) throws IOException
-    {
-//        String wordTranslation=translate("de", "en", wordToTranslate);
-        String wordTranslation= "test";
+    private AnchorPane createTranslationNode(String wordToTranslate,String context) throws IOException, InterruptedException, ParseException {
+        String wordTranslation=translate("de", "en", wordToTranslate);
         FXMLLoader fxmlLoader = new FXMLLoader(Wordbound.class.getResource("FXML/readerScene/translationNode.fxml"));
         AnchorPane tranlationPane = fxmlLoader.load();
 
@@ -323,6 +326,10 @@ public class ReaderSceneController {
                     translationPane = createTranslationNode(word,context);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                } catch (ParseException e) {
+                    throw new RuntimeException(e);
                 }
                 Bounds bnds = wordLabel.localToScreen(wordLabel.getLayoutBounds());
                 double x = bnds.getMinX() - (300) + (wordLabel.getWidth() / 2);
@@ -410,23 +417,22 @@ public class ReaderSceneController {
         pageSelector.setText(String.valueOf(pageSplitter.pageCount));
 
     }
-    private static String translate(String langFrom, String langTo, String text) throws IOException {
-        // INSERT YOU URL HERE
-        String urlStr = "https://script.google.com/macros/s/AKfycbz6cy_Ro5y-R-omGZDjAQJSPVtJsioUxrw_0fSIEO7_NVVIB5K-pcf_ozCK54s6eRJKBA/exec" +
-                "?q=" + URLEncoder.encode(text, "UTF-8") +
-                "&target=" + langTo +
-                "&source=" + langFrom;
-        URL url = new URL(urlStr);
-        StringBuilder response = new StringBuilder();
-        HttpURLConnection con = (HttpURLConnection) url.openConnection();
-        con.setRequestProperty("User-Agent", "Mozilla/5.0");
-        BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-        String inputLine;
-        while ((inputLine = in.readLine()) != null) {
-            response.append(inputLine);
-        }
-        in.close();
-        return response.toString();
+    private static String translate(String langFrom, String langTo, String text) throws IOException, InterruptedException, ParseException {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://google-translate1.p.rapidapi.com/language/translate/v2"))
+                .header("content-type", "application/x-www-form-urlencoded")
+                .header("Accept-Encoding", "application/gzip")
+                .header("X-RapidAPI-Key", "3a502c1024mshb4230da13f860b8p1f3b0ejsn6efb01fc592c")
+                .header("X-RapidAPI-Host", "google-translate1.p.rapidapi.com")
+                .method("POST", HttpRequest.BodyPublishers.ofString("q="+text+"&target="+langTo+"&source="+langFrom))
+                .build();
+        HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+        JSONParser parser = new JSONParser();
+        JSONObject responseJson = (JSONObject) parser.parse(response.body());
+        JSONObject data = (JSONObject) responseJson.get("data");
+        JSONArray translations= (JSONArray) data.get("translations");
+        JSONObject firstTranslation= (JSONObject) translations.get(0);
+        return (String) firstTranslation.get("translatedText");
     }
     public void SwitchToMainMenu() throws IOException, ParseException {
         Stage stage;

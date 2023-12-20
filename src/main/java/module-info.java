@@ -10,6 +10,7 @@ module maingroup.wordbound {
     requires java.desktop;
     requires json;
     requires json.simple;
+    requires java.net.http;
     requires javafx.web;
     opens maingroup.wordbound to javafx.fxml;
     exports maingroup.wordbound;
