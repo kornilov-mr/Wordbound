@@ -86,11 +86,13 @@ public class ReaderSceneController {
             {9, 36},
     }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
     private Map<String,Integer> defaultFontSizes = new HashMap<>();
+    private final Set<Character> charsToIgnore=new HashSet<>(List.of(new Character[]{'.', ',', ';', ':'}));
     public Map<String,Font> fonts = new HashMap<>();
     private Vector<Pair<String,String>> currentpage;
     private AccountClass account;
     private Vector<AnchorPane> addNotes= new Vector<>();
     public void showAddNotes(){
+
         addNotePane.getChildren().clear();
         int Vgap =20;
         int y=20;
@@ -195,13 +197,14 @@ public class ReaderSceneController {
         return false;
     }
     private Set<String> getDecks(){
-        Map<String, DeckWords> deckInTree= account.deckInTree.get(reader.bookName).getKey();
+        Map<String, DeckWords> deckInTree= account.deckInTree.get(reader.bookName);
         Set<String> decks =  deckInTree.keySet();
         return decks;
     }
 
     private AnchorPane createTranslationNode(String wordToTranslate,String context) throws IOException, InterruptedException, ParseException {
-        String wordTranslation=translate("de", "en", wordToTranslate);
+//        String wordTranslation=translate("de", "en", wordToTranslate);
+        String wordTranslation="test";
         FXMLLoader fxmlLoader = new FXMLLoader(Wordbound.class.getResource("FXML/readerScene/translationNode.fxml"));
         AnchorPane tranlationPane = fxmlLoader.load();
 
@@ -255,7 +258,6 @@ public class ReaderSceneController {
                 public void handle(MouseEvent mouseEvent) {
                     if(isOnLabel==false&& isOnNote==false){
                         isOnCombo=false;
-                        System.out.println("test");
                         translationNote.hide();
                         translationNote=new Popup();
                     }
@@ -386,9 +388,15 @@ public class ReaderSceneController {
                     contextCount+=1;
                     content=context.get(contextCount).getKey();
                 }
-                if(!Objects.equals(words[j],"/n")) {
-                    readerTextArea.getChildren().add(createWordLabel(words[j], tag, content));
-                    readerTextArea.getChildren().add(new Text(" "));
+                if(!Objects.equals(words[j],"/n")&&!Objects.equals(words[j],"")) {
+                    if(charsToIgnore.contains(words[j].charAt(words[j].length()-1))){
+                        readerTextArea.getChildren().add(createWordLabel(words[j].substring(0,words[j].length()-1), tag, content));
+                        readerTextArea.getChildren().add(new Text(String.valueOf(words[j].charAt(words[j].length()-1))));
+                        readerTextArea.getChildren().add(new Text(" "));
+                    }else{
+                        readerTextArea.getChildren().add(createWordLabel(words[j], tag, content));
+                        readerTextArea.getChildren().add(new Text(" "));
+                    }
                 }
             }
             readerTextArea.getChildren().add(new Text("\n"));
@@ -398,8 +406,7 @@ public class ReaderSceneController {
     }
 
     public void nextPage() throws IOException, ParseException {
-        account.jsonWritter.updateWordsIncoutered(addwordsIncoutered(this.currentpage));
-        account.updateWordIncountered();
+        account.dataHandler.updateWordsIncoutered(addwordsIncoutered(this.currentpage));
         readerTextArea.getChildren().clear();
         this.currentpage= pageSplitter.getNextPage();
         System.out.println(this.currentpage);
@@ -408,8 +415,7 @@ public class ReaderSceneController {
 
     }
     public void prefPage() throws IOException, ParseException {
-        account.jsonWritter.updateWordsIncoutered(addwordsIncoutered(this.currentpage));
-        account.updateWordIncountered();
+        account.dataHandler.updateWordsIncoutered(addwordsIncoutered(this.currentpage));
         readerTextArea.getChildren().clear();
         this.currentpage= pageSplitter.getPrefPage();
         System.out.println(this.currentpage);
@@ -441,8 +447,6 @@ public class ReaderSceneController {
         Parent root = fxmlLoader.load();
 
         MainSceneController controller = fxmlLoader.getController();
-        account.updateWordIncountered();
-        account.updateWordsInbound();
 
         account.jsonWritter.updateBookData(reader.bookName,pageSplitter.pageCount,defaultDeck);
 

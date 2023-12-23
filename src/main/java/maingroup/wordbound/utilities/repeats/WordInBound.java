@@ -1,16 +1,18 @@
 package maingroup.wordbound.utilities.repeats;
 
-import javafx.util.Pair;
-import maingroup.wordbound.utilities.books.Book;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import org.json.simple.JSONObject;
 
-import java.util.Comparator;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class WordInBound{
     private final Map<Long, Long> repeats= Stream.of(new long[][]{
+            {-1, 20*60*1000},
             {0, 20*60*1000},
             {1, 24*60*60*1000},
             {2, 3*24*60*60*1000},
@@ -26,10 +28,12 @@ public class WordInBound{
     public String originalWord;
     public String timeInyyyymmdd;
     public String wordTranslation;
+    public String context;
     public long id;
     public String key;
+    public String bookName;
     protected long repeatCount;
-    public WordInBound(long realTime, long nextrepeat, String deck, String originalWord,String timeInyyyymmdd,String wordTranslation,long repeatCount,long id,String key){
+    public WordInBound(long realTime, long nextrepeat, String deck, String originalWord,String timeInyyyymmdd,String wordTranslation,long repeatCount,long id,String key,String context, String bookName){
         this.realTime=realTime;
         this.nextrepeat=nextrepeat;
         this.deck=deck;
@@ -39,6 +43,8 @@ public class WordInBound{
         this.repeatCount=repeatCount;
         this.id=id;
         this.key=key;
+        this.context=context;
+        this.bookName= bookName;
     }
     public void getGood(){
         repeatCount+=1;
@@ -63,5 +69,23 @@ public class WordInBound{
 
         wordInfo.put("repeatCount",repeatCount);
         return wordInfo;
+    }
+    public StringProperty originalWordProperty() {
+        return new SimpleStringProperty(originalWord);
+    }
+    public StringProperty wordTranslationProperty() {
+        return  new SimpleStringProperty(wordTranslation);
+    }
+    public StringProperty idProperty(){
+        return new SimpleStringProperty(String.valueOf( id));
+    }
+    public StringProperty contextProperty(){
+        return new SimpleStringProperty(context);
+    }
+    public StringProperty keyProperty(){
+        return new SimpleStringProperty(key);
+    }
+    public StringProperty deckProperty(){
+        return new SimpleStringProperty(deck);
     }
 }

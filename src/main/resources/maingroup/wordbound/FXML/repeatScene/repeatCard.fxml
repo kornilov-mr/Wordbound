@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.TextFlow?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="400.0" style="-fx-border-color: #333333; -fx-border-width: 3;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#333333" height="30.0" layoutX="-3.0" layoutY="50.0" stroke="BLACK" strokeType="INSIDE" width="407.0" />
+      <TextField fx:id="firstWordField" layoutX="14.0" layoutY="10.0" onAction="#changeWordInBound" prefHeight="40.0" prefWidth="370.0" />
+      <TextField fx:id="secondWordField" layoutX="14.0" layoutY="80.0" onAction="#changeWordInBound" prefHeight="40.0" prefWidth="370.0" />
+      <TextFlow fx:id="contextTextFlow" layoutX="15.0" layoutY="125.0" prefHeight="68.0" prefWidth="370.0" />
+   </children>
+</AnchorPane>

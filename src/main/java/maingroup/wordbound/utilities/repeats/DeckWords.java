@@ -16,10 +16,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.Vector;
+import java.util.*;
 
 public class DeckWords {
     public String deckName;
@@ -44,11 +41,10 @@ public class DeckWords {
         long time= System.currentTimeMillis();
         WordInBound firstWord=deck.getFirst();
         if(time<firstWord.nextrepeat){
-            return new WordInBound(-1,-1,firstWord.deck,"-1","-1","-1",0,-1,"first");
+            return new WordInBound(-1,-1,firstWord.deck,"-1","-1","-1",0,-1,"first","null","null");
         }else{
             return deck.getFirst();
         }
-
     }
     public void getGoodWord(){
         deck.getFirst().getGood();
@@ -89,6 +85,23 @@ public class DeckWords {
         flow.setId("deckFlow");
         return flow;
     }
+    public void add(DeckWords other){
+        this.deck.addAll(other.deck);
+    }
+    public JSONObject toJson(){
+        saveOrder();
+        JSONObject words = new JSONObject();
+        for(int i=0;i<deck.size();i+=2){
+            WordInBound word1 =  deck.get(i);
+            WordInBound word2 =  deck.get(i+1);
+            JSONObject card = new JSONObject();
+            card.put(word1.key,word1.toJson());
+            card.put(word2.key,word2.toJson());
+            words.put(word1.id,card);
+        }
+        return words;
+    }
+
 }
 class SortByNextRepeat implements Comparator<WordInBound> {
     public int compare(WordInBound p1, WordInBound p2) {

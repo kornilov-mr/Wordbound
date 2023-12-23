@@ -1,7 +1,9 @@
 package maingroup.wordbound.utilities.Jsons;
 
+import javafx.util.Pair;
 import maingroup.wordbound.accounts.Config;
 import maingroup.wordbound.bookreaders.Bookdata;
+import maingroup.wordbound.utilities.repeats.DeckIndicator;
 import maingroup.wordbound.utilities.repeats.DeckWords;
 import maingroup.wordbound.utilities.repeats.WordInBound;
 import org.json.simple.JSONArray;
@@ -12,10 +14,7 @@ import org.json.simple.parser.ParseException;
 import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.Objects;
-import java.util.Vector;
+import java.util.*;
 
 public class JsonWritter {
     private final String userDataPath= new File("").getAbsolutePath()+"\\src\\main\\java\\maingroup\\wordbound\\userInfo\\userGenerallData.json";
@@ -76,6 +75,7 @@ public class JsonWritter {
         pw.close();
 
     }
+    //rewrite
     public void addNewBookToWordInBoundJson(String bookName,String realBookName) throws IOException, ParseException {
         Object obj = new JSONParser().parse(new FileReader(wordsInBoundPath));
         JSONObject jo = (JSONObject) obj;
@@ -114,169 +114,56 @@ public class JsonWritter {
         pw.flush();
         pw.close();
     }
-    public void changeWordInbound(String originalWord, String wordTranslation,String bookName,String deckName,int idWordinBound) throws IOException, ParseException {
 
-        Object obj = new JSONParser().parse(new FileReader(wordsInBoundPath));
-        JSONObject jo = (JSONObject) obj;
 
-        JSONObject books= (JSONObject) jo.get("books");
-
-        JSONObject curr_book = (JSONObject) books.get(bookName);
-
-        JSONObject deck = (JSONObject) curr_book.get(deckName);
-
-        JSONObject wordsInbound = (JSONObject) deck.get("wordsInbound");
-        JSONObject card = (JSONObject) wordsInbound.get(String.valueOf(idWordinBound));
-        JSONObject word1= (JSONObject) card.get("firstCard");
-        word1.remove("originalWord");
-        word1.remove("wordTranslation");
-        word1.put("originalWord",originalWord);
-        word1.put("wordTranslation",wordTranslation);
-
-        JSONObject word2= (JSONObject) card.get("secondCard");
-        word2.remove("originalWord");
-        word2.remove("wordTranslation");
-        word2.put("originalWord",wordTranslation);
-        word2.put("wordTranslation",originalWord);
-
-        PrintWriter pw = new PrintWriter(wordsInBoundPath);
-        pw.write(jo.toJSONString());
+    public void saveGeneralData(Config config) throws IOException {
+        File json = new File(userDataPath);
+        json.delete();
+        json.createNewFile();
+        PrintWriter pw = new PrintWriter(userDataPath);
+        pw.write(config.createJson().toJSONString());
         pw.flush();
         pw.close();
     }
-    public void changeWordInboundDeck(String bookName,String deckNameOld,String deckNameNew,int idWordinBound) throws IOException, ParseException {
-        Object obj = new JSONParser().parse(new FileReader(wordsInBoundPath));
-        JSONObject jo = (JSONObject) obj;
-
-        JSONObject books= (JSONObject) jo.get("books");
-
-        JSONObject curr_book = (JSONObject) books.get(bookName);
-
-        JSONObject deckold = (JSONObject) curr_book.get(deckNameOld);
-
-        JSONObject wordsInbound = (JSONObject) deckold.get("wordsInbound");
-        JSONObject wordInbound = (JSONObject) wordsInbound.get(idWordinBound);
-        wordsInbound.remove(idWordinBound);
-
-        JSONObject decknew = (JSONObject) curr_book.get(deckNameNew);
-        wordsInbound = (JSONObject) decknew.get("wordsInbound");
-        wordsInbound.put(idWordinBound,wordInbound);
-
-        PrintWriter pw = new PrintWriter(wordsInBoundPath);
-        pw.write(jo.toJSONString());
-        pw.flush();
-        pw.close();
-    }
-    public JSONObject createWordJson(String originalWord, String wordTranslation,String bookName,String deckName,String context){
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-        LocalDateTime data = LocalDateTime.now();
-
-        JSONObject boundData= new JSONObject();
-        boundData.put("originalWord",originalWord);
-        boundData.put("wordTranslation",wordTranslation);
-
-        boundData.put("time",dtf.format(data));
-        boundData.put("realTime",System.currentTimeMillis());
-        boundData.put("nextrepeat",System.currentTimeMillis());
-        if(!Objects.equals(context,"null")){
-            boundData.put("context",context);
-        }
-        boundData.put("repeatCount",-1);
-        return boundData;
-    }
-    public int updateWordInBountJson(String originalWord, String wordTranslation,String bookName,String deckName,String context) throws IOException, ParseException {
-
-
-        Object obj = new JSONParser().parse(new FileReader(wordsInBoundPath));
-        JSONObject jo = (JSONObject) obj;
-
-        JSONObject books= (JSONObject) jo.get("books");
-
-        JSONObject curr_book = (JSONObject) books.get(bookName);
-
-        JSONObject deck = (JSONObject) curr_book.get(deckName);
-
-        JSONObject wordsInbound = (JSONObject) deck.get("wordsInbound");
-
-
-        JSONObject cardInBound = new JSONObject();
-
-        cardInBound.put("firstCard",createWordJson(originalWord,wordTranslation,bookName,deckName,context));
-        cardInBound.put("secondCard",createWordJson(wordTranslation,originalWord,bookName,deckName,context));
-        wordsInbound.put(lastId,cardInBound);
-        lastId+=1;
-
-
-        long wordCount= (long) deck.get("wordCount");
-        deck.remove("wordCount");
-        deck.put("wordCount", wordCount+1);
-
-        PrintWriter pw = new PrintWriter(wordsInBoundPath);
-        pw.write(jo.toJSONString());
-        pw.flush();
-        pw.close();
-        return (int) lastId-1;
-    }
-
-    public void updateWordsIncoutered(Vector<String> words) throws IOException, ParseException {
-
-        Object obj = new JSONParser().parse(new FileReader(wordsIncounteredPath));
-        JSONObject jo = (JSONObject) obj;
-
-        JSONArray arr= (JSONArray) jo.get("wordsIncountered");
-        long bookCount= (long) jo.get("bookCount");
-        int addCount=0;
-        for(int i=0;i<words.size();i++){
-            boolean isIn=false;
-            for(int j=0;j<bookCount;j++){
-                if(Objects.equals(arr.get(j),words.get(i))){
-                    isIn=true;
-                }
-            }
-            if(!isIn) {
-                arr.add(words.get(i));
-                addCount += 1;
-            }
-        }
-        jo.remove("bookCount");
-        jo.put("bookCount", addCount+bookCount);
+    public void saveWordsIncountered(Vector<String> wordsIncountered) throws IOException, ParseException {
+        File json = new File(wordsIncounteredPath);
+        json.delete();
+        json.createNewFile();
+        JSONObject jo = new JSONObject();
+        jo.put("bookCount",wordsIncountered.size());
+        jo.put("wordsIncountered",wordsIncountered);
         PrintWriter pw = new PrintWriter(wordsIncounteredPath);
         pw.write(jo.toJSONString());
         pw.flush();
         pw.close();
     }
-    public void saveDeckInJson(DeckWords deckWords) throws IOException, ParseException {
-        deckWords.saveOrder();
+    public void saveWordsInBound(Map<String, Map<String,DeckWords>> deckInTree) throws IOException, ParseException {
+        File json = new File(wordsInBoundPath);
+        json.delete();
+        json.createNewFile();
+        JSONObject jo = new JSONObject();
+        JSONObject books= new JSONObject();
+        Iterator<String> booksIterator = deckInTree.keySet().iterator();
+        while(booksIterator.hasNext()){
 
-        Object obj = new JSONParser().parse(new FileReader(wordsInBoundPath));
-        JSONObject jo = (JSONObject) obj;
+            String bookName= booksIterator.next();
+            JSONObject decksJson= new JSONObject();
+            Map<String,DeckWords> decks = deckInTree.get(bookName);
+            Iterator<String> deckIterator = decks.keySet().iterator();
+            String deckName="";
+            DeckWords currDeck = null;
+            while(deckIterator.hasNext()){
+                deckName = deckIterator.next();
+                currDeck = decks.get(deckName);
+                decksJson.put(deckName,currDeck.toJson());
+            }
+            decksJson.put("realBookName",currDeck.realBookName);
+            books.put(bookName,decksJson);
 
-        JSONObject books= (JSONObject) jo.get("books");
-
-        JSONObject decks=(JSONObject) books.get(deckWords.bookName);
-        JSONObject deckJson=(JSONObject) decks.get(deckWords.deckName);
-        deckJson.remove("wordsInbound");
-
-        JSONObject words = new JSONObject();
-        for(int i=0;i<deckWords.deck.size();i+=2){
-            WordInBound word1 =  deckWords.deck.get(i);
-            WordInBound word2 =  deckWords.deck.get(i+1);
-            JSONObject card = new JSONObject();
-            card.put(word1.key,word1.toJson());
-            card.put(word2.key,word2.toJson());
-            words.put(word1.id,card);
         }
-        deckJson.put("wordsInbound", words);
-        deckJson.remove("wordCount");
-        deckJson.put("wordCount",words.size());
+        jo.put("books",books);
         PrintWriter pw = new PrintWriter(wordsInBoundPath);
         pw.write(jo.toJSONString());
-        pw.flush();
-        pw.close();
-    }
-    public void updateGeneralData(Config config) throws IOException {
-        PrintWriter pw = new PrintWriter(wordsInBoundPath);
-        pw.write(config.createJson().toJSONString());
         pw.flush();
         pw.close();
     }

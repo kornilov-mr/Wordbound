@@ -52,8 +52,6 @@ public class RepeatSceneController  {
             secondWordLabel.setText(currWord.wordTranslation);
             secondWordLabel.setVisible(false);
         }else{
-            account.jsonWritter.saveDeckInJson(deck);
-            account.updateWordsInbound();
             SwitchToEndScene();
         }
     }

@@ -32,7 +32,7 @@ public class AddNoteController {
         this.deckName=deckName;
     }
     public void changeWordInBound() throws IOException, ParseException {
-        account.jsonWritter.changeWordInbound(firstWordField.getText(),secondWordField.getText(),bookName,deckName,idWordInbound);
+        account.dataHandler.changeWordInbound(firstWordField.getText(),secondWordField.getText(),bookName,deckName,idWordInbound);
     }
 
 }

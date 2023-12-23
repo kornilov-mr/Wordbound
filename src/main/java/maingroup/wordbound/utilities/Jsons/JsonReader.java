@@ -78,9 +78,8 @@ public class JsonReader {
         }
         return bookSet;
     }
-    public Pair<Map<String, Pair<Map<String,DeckWords>,DeckIndicator>>,Map<String,DeckWords>> loadWordsInbound() throws IOException, ParseException {
-        Map<String, Pair<Map<String,DeckWords>,DeckIndicator>> deckInTree = new HashMap<>();
-        Map<String,DeckWords> decksInVector= new HashMap<>();
+    public Map<String, Map<String,DeckWords>> loadWordsInbound() throws IOException, ParseException {
+        Map<String, Map<String,DeckWords>> deckInTree = new HashMap<>();
         Object obj = new JSONParser().parse(new FileReader(wordsInBoundPath));
         JSONObject jo = (JSONObject) obj;
 
@@ -92,8 +91,8 @@ public class JsonReader {
             JSONObject decks= (JSONObject) books.get(bookname);
             String realBookName= (String) decks.get("realBookName");
             Iterator<String> decksIterator = decks.keySet().iterator();
-            Vector<DeckIndicator> indicators= new Vector<>();
-            Map<String, DeckWords> decksInBook = new HashMap<>();
+            Map<String,DeckWords> decksInBook= new HashMap<>();
+
             while(decksIterator.hasNext()){
                 String deckName = decksIterator.next();
                 if(Objects.equals(deckName,"realBookName")){
@@ -102,7 +101,7 @@ public class JsonReader {
                 Vector<WordInBound> wordInBound= new Vector<>();
 
                 JSONObject deck= (JSONObject) decks.get(deckName);
-                long wordCount= (long) deck.get("wordCount");
+
                 JSONObject words =(JSONObject) deck.get("wordsInbound");
                 Iterator<String> idIterator= words.keySet().iterator();
                 while(idIterator.hasNext()){
@@ -113,26 +112,13 @@ public class JsonReader {
                 }
 
                 DeckWords currDeck = new DeckWords(wordInBound,deckName,bookname,realBookName);
-                decksInVector.put(bookname+"::"+deckName,currDeck);
                 decksInBook.put(deckName,currDeck);
-                indicators.add(currDeck.getIndicator());
             }
-            deckInTree.put(bookname,new Pair<>(decksInBook,sumIndecators(indicators)));
+            deckInTree.put(bookname,decksInBook);
         }
-        return new Pair<>(deckInTree,decksInVector);
+        return deckInTree;
     }
-    private DeckIndicator sumIndecators(Vector<DeckIndicator> indicators){
-        int blue=0;
-        int red=0;
-        int green=0;
-        for(int i=0;i<indicators.size();i++){
-            DeckIndicator currIndicator= indicators.get(i);
-            blue+=currIndicator.blue;
-            red+=currIndicator.red;
-            green+=currIndicator.green;
-        }
-        return new DeckIndicator(red,blue,green);
-    }
+
     private WordInBound CreateWordInBoundFromJson(JSONObject wordInfos,String id,String key){
         JSONObject wordInfo= (JSONObject) wordInfos.get(key);
         WordInBound word = new WordInBound((Long) wordInfo.get("realTime"),
@@ -143,7 +129,9 @@ public class JsonReader {
                 (String) wordInfo.get("wordTranslation"),
                 (Long) wordInfo.get("repeatCount"),
                 Long.parseLong(id),
-                key);
+                key,
+                (String) wordInfo.get("context"),
+                (String) wordInfo.get("bookName"));
         return word;
 
     }

@@ -37,12 +37,10 @@ public class MainSceneRepeat{
     private Scene scene;
     private Parent root;
     private Stage stage;
-    public Map<String, Pair<Map<String,DeckWords>,DeckIndicator>> deckInTree= new HashMap<>();
     private Map<String, DeckWords> deckMap= new HashMap<String, DeckWords>();
 
     public void loadAccount(AccountClass account){
         this.account=account;
-        this.deckInTree=account.deckInTree;
     }
     public void deckSelect(MouseEvent event) throws IOException, ParseException {
         TreeItem<DeckWords> item = (TreeItem<DeckWords>)vocabularyTree.getSelectionModel().getSelectedItem();
@@ -75,31 +73,48 @@ public class MainSceneRepeat{
 
 
     public void loadWordInBound(){
+
         vocabularyTree.setShowRoot(false);
         TreeItem<DeckWords> mainRoot= new TreeItem<>(new DeckWords(new Vector<>(),"null","null","null"));
-        Iterator<String> booksIterator =deckInTree.keySet().iterator();
+        Iterator<String> booksIterator =account.deckInTree.keySet().iterator();
         while(booksIterator.hasNext()){
             String bookName= booksIterator.next();
 
             TreeItem<DeckWords> bookNode= new TreeItem<>(new DeckWords(new Vector<>(),bookName,bookName,bookName));
 
-            Pair<Map<String,DeckWords>,DeckIndicator> decksData = account.deckInTree.get(bookName);
-            Map<String, DeckWords> decks= decksData.getKey();
+            Map<String,DeckWords> decks = account.deckInTree.get(bookName);
 
             Iterator<String> decksIterator = decks.keySet().iterator();
+
             String realBookName="";
+
+            Vector<DeckIndicator> indicators= new Vector<>();
             while(decksIterator.hasNext()){
                 String deckName=decksIterator.next();
                 DeckWords curr_deck= decks.get(deckName);
                 realBookName=curr_deck.realBookName;
                 TreeItem<DeckWords> deckNode = new TreeItem<>(curr_deck);
                 deckNode.setGraphic(curr_deck.createFlowPaneForDeck(curr_deck.getIndicator()));
+                indicators.add(curr_deck.getIndicator());
                 bookNode.getChildren().add(deckNode);
             }
             bookNode.getValue().deckName=realBookName;
-            bookNode.setGraphic(bookNode.getValue().createFlowPaneForDeck(decksData.getValue()));
+
+            bookNode.setGraphic(bookNode.getValue().createFlowPaneForDeck(sumIndecators(indicators)));
             mainRoot.getChildren().add(bookNode);
         }
         vocabularyTree.setRoot(mainRoot);
+    }
+    private DeckIndicator sumIndecators(Vector<DeckIndicator> indicators){
+        int blue=0;
+        int red=0;
+        int green=0;
+        for(int i=0;i<indicators.size();i++){
+            DeckIndicator currIndicator= indicators.get(i);
+            blue+=currIndicator.blue;
+            red+=currIndicator.red;
+            green+=currIndicator.green;
+        }
+        return new DeckIndicator(red,blue,green);
     }
 }

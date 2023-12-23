@@ -47,7 +47,7 @@ public class TranslationNoteController {
     }
     private Set<String> getDecks() throws IOException, ParseException {
         account.updateWordsInbound();
-        Map<String, DeckWords> deckInTree= account.deckInTree.get(bookName).getKey();
+        Map<String, DeckWords> deckInTree= account.deckInTree.get(bookName);
         Set<String> decks =  deckInTree.keySet();
         return decks;
     }
@@ -66,9 +66,9 @@ public class TranslationNoteController {
             selectedDeck="default";
         }
         if(pullContext.isSelected()){
-            idWordInBound=account.jsonWritter.updateWordInBountJson(originalWord,translatedWord,bookName,selectedDeck,context);
+            idWordInBound=account.dataHandler.addNewWordToWordInBount(originalWord,translatedWord,bookName,selectedDeck,context);
         }else{
-            idWordInBound=account.jsonWritter.updateWordInBountJson(originalWord,translatedWord,bookName,selectedDeck,"null");
+            idWordInBound=account.dataHandler.addNewWordToWordInBount(originalWord,translatedWord,bookName,selectedDeck,"null");
         }
         controller.defaultDeck=selectedDeck;
         controller.createAddNote(originalWord,translatedWord,selectedDeck,idWordInBound);
@@ -78,7 +78,6 @@ public class TranslationNoteController {
     public void loadListView() throws IOException, ParseException {
         Set<String> decks = getDecks();
         listViewForDecks.getItems().addAll(decks);
-
     }
     public void CreateNewDeck() throws IOException {
 

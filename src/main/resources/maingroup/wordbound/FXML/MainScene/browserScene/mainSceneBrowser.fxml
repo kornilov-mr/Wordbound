@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane fx:id="maiNPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="maingroup.wordbound.Controllers.MainScene.BrowserSceneController">
+   <children>
+      <ComboBox fx:id="deckSelector" layoutX="114.0" layoutY="498.0" onAction="#onDeckChange" prefWidth="150.0" />
+      <TableView fx:id="cardShowTable" layoutX="114.0" layoutY="43.0" prefHeight="440.0" prefWidth="600.0" />
+      <AnchorPane fx:id="cardForDeck" layoutX="314.0" layoutY="498.0" prefHeight="180.0" prefWidth="400.0" />
+   </children>
+</AnchorPane>
