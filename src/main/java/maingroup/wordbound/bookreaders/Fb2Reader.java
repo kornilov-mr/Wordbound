@@ -117,7 +117,7 @@ public class Fb2Reader {
                 account.jsonWritter.addNewBookToWordInBoundJson(this.bookName,this.realBookName);
                 account.jsonWritter.updateJson(bookdata);
                 account.updateWordsInbound();
-
+                account.dataHandler.addNewDeckToWordInBoundJson("default",this.bookName,this.realBookName);
             }
         } else {
 

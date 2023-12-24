@@ -220,7 +220,7 @@ public class ReaderSceneController {
         TranslationNoteController controller= fxmlLoader.getController();
         controller.loadAccount(account);
         controller.setParent(this);
-        controller.setWords(wordToTranslate,wordTranslation, reader.bookName,context);
+        controller.setWords(wordToTranslate,wordTranslation, reader.bookName,context,reader.realBookName);
         controller.listViewForDecks.getItems().addAll(getDecks());
         controller.listViewForDecks.getSelectionModel().select(defaultDeck);
         controller.listViewForDecks.setOnMouseEntered(new EventHandler<MouseEvent>() {

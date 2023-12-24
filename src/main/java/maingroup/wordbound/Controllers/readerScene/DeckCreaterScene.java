@@ -20,12 +20,14 @@ public class DeckCreaterScene {
     private TextField newDeckField;
     private AccountClass account;
     private String bookName;
+    private String realBookName;
     private TranslationNoteController controller;
     public void loadAccount(AccountClass account){
         this.account=account;
     }
-    public void passBookName(String bookName){
+    public void passBookName(String bookName,String realBookName){
         this.bookName=bookName;
+        this.realBookName=realBookName;
     }
     public void setParent(TranslationNoteController controller){
         this.controller= controller;
@@ -37,6 +39,7 @@ public class DeckCreaterScene {
             alert.setTitle("inappropriate deck name");
         }else{
             account.jsonWritter.addNewDeckToWordInBoundJson(newDeckName,bookName);
+            account.dataHandler.addNewDeckToWordInBoundJson(newDeckName,bookName,realBookName);
             controller.loadListView();
             controller.lastDeck=newDeckName;
             Stage stage;

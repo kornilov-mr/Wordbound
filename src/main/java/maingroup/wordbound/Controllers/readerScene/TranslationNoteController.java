@@ -38,6 +38,7 @@ public class TranslationNoteController {
     private String originalWord;
     private String translatedWord;
     private String context;
+    private String realBookName;
     private ReaderSceneController controller;
     public void loadAccount(AccountClass account){
         this.account= account;
@@ -46,14 +47,15 @@ public class TranslationNoteController {
         this.controller= controller;
     }
     private Set<String> getDecks() throws IOException, ParseException {
-        account.updateWordsInbound();
+//        account.updateWordsInbound();
         Map<String, DeckWords> deckInTree= account.deckInTree.get(bookName);
         Set<String> decks =  deckInTree.keySet();
         return decks;
     }
-    public void setWords(String originalWord, String translatedWord,String bookName,String context){
+    public void setWords(String originalWord, String translatedWord,String bookName,String realBookName,String context){
         originalWordLabel.setText(originalWord);
         translatedWordLabel.setText(translatedWord);
+        this.realBookName=realBookName;
         this.bookName=bookName;
         this.context=context;
         this.originalWord= originalWord;
@@ -68,7 +70,7 @@ public class TranslationNoteController {
         if(pullContext.isSelected()){
             idWordInBound=account.dataHandler.addNewWordToWordInBount(originalWord,translatedWord,bookName,selectedDeck,context);
         }else{
-            idWordInBound=account.dataHandler.addNewWordToWordInBount(originalWord,translatedWord,bookName,selectedDeck,"null");
+            idWordInBound=account.dataHandler.addNewWordToWordInBount(originalWord,translatedWord,bookName,selectedDeck,"");
         }
         controller.defaultDeck=selectedDeck;
         controller.createAddNote(originalWord,translatedWord,selectedDeck,idWordInBound);
@@ -91,7 +93,7 @@ public class TranslationNoteController {
 
         DeckCreaterScene controllernewScene = fxmlLoader.getController();
         controllernewScene.loadAccount(account);
-        controllernewScene.passBookName(bookName);
+        controllernewScene.passBookName(bookName,realBookName);
         controllernewScene.setParent(this);
         scene.getStylesheets().add(css);
         stage.setScene(scene);

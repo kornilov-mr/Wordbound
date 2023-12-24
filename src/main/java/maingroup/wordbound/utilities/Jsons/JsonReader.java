@@ -100,9 +100,8 @@ public class JsonReader {
                 }
                 Vector<WordInBound> wordInBound= new Vector<>();
 
-                JSONObject deck= (JSONObject) decks.get(deckName);
+                JSONObject words= (JSONObject) decks.get(deckName);
 
-                JSONObject words =(JSONObject) deck.get("wordsInbound");
                 Iterator<String> idIterator= words.keySet().iterator();
                 while(idIterator.hasNext()){
                     String currId= idIterator.next();

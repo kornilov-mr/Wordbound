@@ -82,12 +82,8 @@ public class JsonWritter {
 
         JSONObject books= (JSONObject) jo.get("books");
         JSONObject deckJson= new JSONObject();
-        JSONObject wordinboundJson = new JSONObject();
 
-
-        wordinboundJson.put("wordCount",0);
-        wordinboundJson.put("wordsInbound",new JSONObject());
-        deckJson.put("default",wordinboundJson);
+        deckJson.put("default",new JSONObject());
         deckJson.put("realBookName",realBookName);
         books.put(bookName,deckJson);
         jo.remove("books");
@@ -96,6 +92,7 @@ public class JsonWritter {
         pw.write(jo.toJSONString());
         pw.flush();
         pw.close();
+
     }
     public void addNewDeckToWordInBoundJson(String deckName,String bookName) throws IOException, ParseException {
         Object obj = new JSONParser().parse(new FileReader(wordsInBoundPath));
@@ -104,11 +101,7 @@ public class JsonWritter {
         JSONObject books= (JSONObject) jo.get("books");
         JSONObject deckJson= (JSONObject) books.get(bookName);
 
-        JSONObject wordinboundJson = new JSONObject();
-        wordinboundJson.put("wordCount",0);
-        wordinboundJson.put("wordsInbound",new JSONObject());
-
-        deckJson.put(deckName,wordinboundJson);
+        deckJson.put(deckName,new JSONObject());
         PrintWriter pw = new PrintWriter(wordsInBoundPath);
         pw.write(jo.toJSONString());
         pw.flush();

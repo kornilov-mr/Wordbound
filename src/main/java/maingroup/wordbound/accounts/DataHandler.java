@@ -1,5 +1,6 @@
 package maingroup.wordbound.accounts;
 
+import maingroup.wordbound.utilities.repeats.DeckWords;
 import maingroup.wordbound.utilities.repeats.WordInBound;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -11,12 +12,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.Vector;
 
 public class DataHandler {
     AccountClass account;
-    int lastId=0;
     public DataHandler(AccountClass account){
         this.account=account;
     }
@@ -46,7 +47,7 @@ public class DataHandler {
                 dtf.format(data),
                 wordTranslation,
                 -1,
-                lastId,
+                account.generalldata.lastId,
                 key,
                 context,
                 bookName);
@@ -60,8 +61,8 @@ public class DataHandler {
         account.deckInTree.get(bookName).get(deckName).deck.add(wordInBound1);
         account.deckInTree.get(bookName).get(deckName).deck.add(wordInBound2);
 
-        lastId+=1;
-        return (int) lastId-1;
+        account.generalldata.lastId+=1;
+        return (int) account.generalldata.lastId-1;
     }
     public void changeWordInboundDeck(String bookName,String deckNameOld,String deckNameNew,int idWordinBound) throws IOException, ParseException {
         WordInBound word1 = null;
@@ -88,7 +89,13 @@ public class DataHandler {
         account.deckInTree.get(bookName).get(deckNameNew).deck.add(word1);
         account.deckInTree.get(bookName).get(deckNameNew).deck.add(word2);
     }
-    //to rewrite
+    public void addNewDeckToWordInBoundJson(String deckName,String bookName,String realBookName) throws IOException, ParseException {
+        account.deckInTree.get(bookName).put(deckName, new DeckWords(new Vector<>(),deckName,bookName,realBookName));
+    }
+    public void addNewBookToWordInBoundJson(String bookName,String realBookName) throws IOException, ParseException {
+        account.deckInTree.put(bookName, new HashMap<>());
+
+    }
     public void changeWordInbound(String originalWord, String wordTranslation,String bookName,String deckName,int idWordinBound) throws IOException, ParseException {
         int iToChange1=-1;
         int iToChange2=-1;
