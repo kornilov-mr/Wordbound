@@ -20,4 +20,5 @@ module maingroup.wordbound {
     opens maingroup.wordbound.Controllers.MainScene to javafx.fxml;
     exports maingroup.wordbound.Controllers.readerScene;
     opens maingroup.wordbound.Controllers.readerScene to javafx.fxml;
+    opens maingroup.wordbound.Controllers.statisticsScene to javafx.fxml;
 }

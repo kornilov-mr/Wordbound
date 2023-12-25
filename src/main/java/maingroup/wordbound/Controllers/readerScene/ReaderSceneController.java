@@ -160,7 +160,7 @@ public class ReaderSceneController {
 
 
 
-    private Vector<String> addwordsIncoutered(Vector<Pair<String,String>> text){
+    private Vector<String> getClearWords(Vector<Pair<String,String>> text){
         if(text== null){
             return new Vector<>();
         }
@@ -406,7 +406,11 @@ public class ReaderSceneController {
     }
 
     public void nextPage() throws IOException, ParseException {
-        account.dataHandler.updateWordsIncoutered(addwordsIncoutered(this.currentpage));
+        Vector<String> cleanWords= getClearWords(this.currentpage);
+
+        account.statisticController.totalWordRead+=cleanWords.size();
+        account.dataHandler.updateWordsIncoutered(cleanWords);
+
         readerTextArea.getChildren().clear();
         this.currentpage= pageSplitter.getNextPage();
         System.out.println(this.currentpage);
@@ -415,7 +419,11 @@ public class ReaderSceneController {
 
     }
     public void prefPage() throws IOException, ParseException {
-        account.dataHandler.updateWordsIncoutered(addwordsIncoutered(this.currentpage));
+        Vector<String> cleanWords= getClearWords(this.currentpage);
+
+        account.statisticController.totalWordRead+=cleanWords.size();
+        account.dataHandler.updateWordsIncoutered(cleanWords);
+
         readerTextArea.getChildren().clear();
         this.currentpage= pageSplitter.getPrefPage();
         System.out.println(this.currentpage);

@@ -19,11 +19,9 @@ import java.io.PrintWriter;
 
 public class Wordbound extends Application {
 
-    public String jsonBookPath=new File("").getAbsolutePath()+"\\src\\main\\resources\\maingroup\\wordbound\\books\\bookinfo.json";
     AccountClass account;
     @Override
     public void start(Stage stage) throws IOException, ParseException {
-        initialize();
         AccountClass acount = new AccountClass();
         this.account=acount;
         FXMLLoader fxmlLoader = new FXMLLoader(Wordbound.class.getResource("FXML/MainScene/mainScene.fxml"));
@@ -59,40 +57,15 @@ public class Wordbound extends Application {
             account.jsonWritter.saveGeneralData(account.generalldata);
             account.jsonWritter.saveWordsInBound(account.deckInTree);
             account.jsonWritter.saveWordsIncountered(account.wordsIncountered);
+            account.statisticController.saveStatistic();
             stage.close();
+        }else{
+            stage.close();
+
         }
     }
-    private void initialize() throws IOException, ParseException {
-        File f = new File(jsonBookPath);
-        if(!f.exists()) {
-            CreateBookJson();
-        }
-    }
-    private void CreateBookJson() throws IOException {
-        try {
-            File myObj = new File(jsonBookPath);
-            if (myObj.createNewFile()) {
-                System.out.println("json file for books was created");
-            } else {
-                System.out.println("json file for books is already present");
-            }
-        } catch (IOException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
 
 
-        JSONObject jo = new JSONObject();
-        jo.put("bookCount",0);
-        jo.put("wordCount",0);
-        jo.put("books",new JSONObject());
-
-
-        PrintWriter pw = new PrintWriter(jsonBookPath);
-        pw.write(jo.toJSONString());
-        pw.flush();
-        pw.close();
-    }
     public static void main(String[] args) {
         launch();
     }

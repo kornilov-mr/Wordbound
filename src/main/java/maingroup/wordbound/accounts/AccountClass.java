@@ -1,6 +1,7 @@
 package maingroup.wordbound.accounts;
 
 import javafx.util.Pair;
+import maingroup.wordbound.statistics.StatisticController;
 import maingroup.wordbound.utilities.Jsons.JsonHandler;
 import maingroup.wordbound.utilities.Jsons.JsonReader;
 import maingroup.wordbound.utilities.Jsons.JsonWritter;
@@ -25,6 +26,7 @@ public class AccountClass {
     public Vector<String> wordsIncountered = new Vector<>();
     public Map<String, Map<String, DeckWords>> deckInTree = new HashMap<>();
     public BookSet bookset;
+    public StatisticController statisticController = new StatisticController();
 
     public AccountClass() throws IOException, ParseException {
         jsonHandler = new JsonHandler(jsonReader);

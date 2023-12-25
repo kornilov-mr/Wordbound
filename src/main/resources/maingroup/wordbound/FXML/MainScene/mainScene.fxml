@@ -14,7 +14,7 @@
                <VBox.margin>
                   <Insets top="10.0" />
                </VBox.margin></Button>
-            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="500.0" text="statistic">
+            <Button mnemonicParsing="false" onAction="#loadStatisticsScene" prefHeight="50.0" prefWidth="500.0" text="statistic">
                <VBox.margin>
                   <Insets top="10.0" />
                </VBox.margin></Button>
